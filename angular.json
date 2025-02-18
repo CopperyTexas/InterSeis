@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "shoe-store": {
+    "InterSeis": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/shoe-store",
+            "outputPath": "dist/InterSeis",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -61,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "shoe-store:build:production"
+              "buildTarget": "InterSeis:build:production"
             },
             "development": {
-              "buildTarget": "shoe-store:build:development"
+              "buildTarget": "InterSeis:build:development"
             }
           },
           "defaultConfiguration": "development"
