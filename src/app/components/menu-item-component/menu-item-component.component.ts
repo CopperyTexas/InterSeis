@@ -13,6 +13,7 @@ export class MenuItemComponent {
   @Input() title!: string; // Название пункта
   @Input() submenu: string[] = []; // Подменю
   isOpen = false;
+  isHovered = false;
   constructor(private eRef: ElementRef) {}
   toggleMenu() {
     this.isOpen = !this.isOpen;
@@ -23,4 +24,6 @@ export class MenuItemComponent {
       this.isOpen = false;
     }
   }
+
+  protected readonly onmouseenter = onmouseenter;
 }
