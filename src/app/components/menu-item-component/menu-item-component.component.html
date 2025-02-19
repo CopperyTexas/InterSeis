@@ -1,0 +1,24 @@
+<li class="relative cursor-pointer">
+  <div class="flex items-center gap-2 text-white" (click)="toggleMenu()">
+    <img [src]="iconPath" alt="{{ title }} icon" class="w-4 h-4" />
+    <span class="text-xl">{{ title }}</span>
+    <img
+      src="assets/icons/Arrow.svg"
+      alt="Arrow"
+      class="w-4 h-4 pt-1 transition-transform duration-300"
+      [class.-rotate-90]="isOpen"
+    />
+  </div>
+
+  <ul
+    *ngIf="isOpen"
+    class="absolute left-0 mt-2 w-36 bg-white text-black rounded-lg shadow-lg"
+  >
+    <li
+      *ngFor="let item of submenu"
+      class="px-4 py-2 hover:bg-gray-200 cursor-pointer rounded-lg"
+    >
+      {{ item }}
+    </li>
+  </ul>
+</li>

@@ -1,0 +1,12 @@
+<!-- Навигация -->
+<nav class="text-white">
+  <ul class="flex justify-between items-center gap-8 pr-10">
+    <app-menu-item
+      *ngFor="let item of menuItems"
+      [title]="item.title"
+      [iconPath]="item.iconPath"
+      [submenu]="item.submenu"
+    >
+    </app-menu-item>
+  </ul>
+</nav>

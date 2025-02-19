@@ -5,8 +5,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 800,
+    width: 1920,
+    height: 1080,
     icon: path.join(__dirname, 'resources', 'InterSeis.ico'),
     webPreferences: {
       nodeIntegration: true,
