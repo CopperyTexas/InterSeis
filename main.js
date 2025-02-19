@@ -13,15 +13,8 @@ function createWindow() {
     },
   });
 
-  const indexPath = path.join(
-    __dirname,
-    'dist',
-    'InterSeis',
-    'browser',
-    'index.html',
-  );
-  mainWindow.loadFile(indexPath);
-
+  mainWindow.loadURL('http://localhost:4200');
+  // Открываем DevTools для отладки
   mainWindow.webContents.openDevTools();
   mainWindow.on('closed', function () {
     mainWindow = null;
