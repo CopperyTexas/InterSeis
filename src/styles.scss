@@ -35,4 +35,6 @@
 /* Применение шрифта ко всему документу */
 body {
   font-family: 'Geometria', sans-serif;
+  height: 100%;
+  overflow: hidden; // Убираем вертикальный скролл
 }

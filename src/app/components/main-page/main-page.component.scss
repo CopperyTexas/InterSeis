@@ -1,0 +1,12 @@
+.sidebar,
+.procedures {
+  transition: width 0.1s ease-in-out;
+  overflow-y: auto;
+}
+
+.resizer {
+  width: 10px;
+  cursor: ew-resize;
+  background: #1d4ed8;
+  transition: background 0.1s;
+}

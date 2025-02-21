@@ -1,0 +1,73 @@
+<div class="flex h-full border-t-white border-t-[10px]">
+  <!-- Левая панель -->
+  <div
+    #sidebar
+    class="flex flex-col sidebar w-64 flex-shrink-0 min-w-[200px] max-w-[800px] h-full"
+  >
+    <!-- Закреплённый заголовок -->
+    <div
+      class="p-4 bg-blue-700 text-white select-none text-center text-lg font-bold"
+    >
+      Файлы обработки
+    </div>
+
+    <!-- Гибкая область, занимает всё оставшееся место -->
+    <div class="flex-1 overflow-auto select-none">Дерево файлов</div>
+
+    <!-- Закреплённый заголовок внизу -->
+    <div
+      class="p-4 bg-blue-700 text-white select-none text-center text-lg font-bold h-36"
+    >
+      Информация о проекте
+    </div>
+  </div>
+
+  <!-- Перетаскиваемая граница -->
+  <div
+    class="resizer min-w-[10px]"
+    (mousedown)="startResizing($event, 'left')"
+  ></div>
+
+  <!-- Центральная панель -->
+  <div class="main-content flex-1 bg-gray-100 flex flex-col min-w-[400px]">
+    <div
+      class="p-4 select-none text-center bg-blue-700 text-white text-lg font-bold"
+    >
+      Граф обработки
+    </div>
+    <!-- Гибкая область, занимает всё оставшееся место -->
+    <div class="flex-1 overflow-auto select-none">Процесс обработки</div>
+    <!-- Закреплённый заголовок внизу -->
+    <div
+      class="p-4 bg-blue-700 text-white select-none text-center text-lg font-bold h-36"
+    >
+      Лог обработки
+    </div>
+  </div>
+
+  <!-- Перетаскиваемая граница -->
+  <div
+    class="resizer min-w-[10px]"
+    (mousedown)="startResizing($event, 'right')"
+  ></div>
+
+  <!-- Правая панель -->
+  <div
+    #procedures
+    class="flex flex-col procedures w-64 flex-shrink-0 min-w-[200px] max-w-[800px] h-full"
+  >
+    <div
+      class="p-4 bg-blue-700 select-none text-center text-white text-lg font-bold"
+    >
+      Процедуры
+    </div>
+    <!-- Гибкая область, занимает всё оставшееся место -->
+    <div class="flex-1 overflow-auto select-none">Список процедур</div>
+    <!-- Закреплённый заголовок внизу -->
+    <div
+      class="p-4 bg-blue-700 text-white select-none text-center text-lg font-bold h-36"
+    >
+      Фильтры
+    </div>
+  </div>
+</div>
