@@ -1,33 +1,32 @@
 <li class="relative cursor-pointer">
   <div
-    class="flex items-center gap-2 text-white mr-2"
+    class="flex items-center justify-between gap-2 text-white border-2 rounded-lg p-2 transition-transform duration-300 w-[170px]"
     (click)="toggleMenu()"
     (mouseenter)="isHovered = true"
     (mouseleave)="isHovered = false"
+    [class.scale-110]="isHovered || isOpen"
+    [ngClass]="{ 'rounded-b-none border-b-0': isOpen }"
   >
-    <img [src]="iconPath" alt="{{ title }} icon" class="w-4 h-4 mt-1" />
-    <span
-      class="text-xl transition-transform duration-300"
-      [class.text-blue-300]="isHovered || isOpen"
-      [class.scale-105]="isHovered || isOpen"
-      >{{ title }}</span
-    >
+    <img [src]="iconPath" alt="{{ title }} icon" class="w-6 h-6" />
+    <span class="text-xl transition-transform duration-300 select-none">{{
+      title
+    }}</span>
     <img
       src="assets/icons/Arrow.svg"
       alt="Arrow"
-      class="w-4 h-4 pt-1 transition-transform duration-300"
-      [class.-rotate-90]="isOpen"
-      [class.filter-blue]="isHovered || isOpen"
+      class="w-6 h-6 transition-transform duration-300"
+      [class.rotate-180]="isOpen"
     />
   </div>
 
   <ul
     *ngIf="isOpen"
-    class="absolute left-0 mt-2 w-36 bg-white text-black rounded-lg shadow-lg"
+    @fadeInOut
+    class="absolute -right-2 top-12 w-[186px] border-2 text-white shadow-lg bg-blue-700 rounded-lg rounded-t-none transition-all duration-300 border-t-0"
   >
     <li
       *ngFor="let item of submenu"
-      class="px-4 py-2 hover:bg-gray-200 cursor-pointer rounded-lg"
+      class="hover:bg-gray-300 cursor-pointer p-2 text-center select-none"
     >
       {{ item }}
     </li>

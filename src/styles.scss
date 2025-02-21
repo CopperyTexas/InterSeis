@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,5 +32,7 @@
   font-style: italic;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Применение шрифта ко всему документу */
+body {
+  font-family: 'Geometria', sans-serif;
+}
