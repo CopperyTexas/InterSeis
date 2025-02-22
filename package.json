@@ -19,7 +19,8 @@
     },
     "files": [
       "dist/InterSeis/browser/**/*",
-      "main.js"
+      "main.js",
+      "preload.js"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
