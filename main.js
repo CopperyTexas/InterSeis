@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let mainWindow;
 
@@ -9,26 +10,22 @@ function createWindow() {
     height: 1080,
     icon: path.join(__dirname, 'resources', 'InterSeis.ico'),
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'), // Подключаем preload.js
+      contextIsolation: true, // Изоляция контекста (безопасность)
+      enableRemoteModule: false,
+      nodeIntegration: false, // Запрещаем полный доступ к Node.js
     },
   });
 
   if (process.env.NODE_ENV === 'development') {
     // В режиме разработки загружаем Angular Dev Server
     mainWindow.loadURL('http://localhost:4200');
-    // Опционально открываем DevTools
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools(); // Открываем DevTools
   } else {
-    // В production режиме загружаем статичные файлы из dist
-    const indexPath = path.join(
-      __dirname,
-      'dist',
-      'InterSeis',
-      'browser',
-      'index.html',
+    // В production загружаем статичные файлы Angular
+    mainWindow.loadFile(
+      path.join(__dirname, 'dist', 'InterSeis', 'browser', 'index.html'),
     );
-    mainWindow.loadFile(indexPath);
   }
 
   mainWindow.on('closed', () => {
@@ -36,12 +33,43 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+// 🔹 Теперь IPC-события регистрируются после `app.whenReady()`
+app.whenReady().then(() => {
+  createWindow();
 
+  // 📂 Обработчик выбора папки
+  ipcMain.handle('openFolderDialog', async () => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory'],
+    });
+    return result.filePaths[0] || null;
+  });
+
+  // 📁 Читаем содержимое папки
+  ipcMain.handle('readDirectory', async (_, folderPath) => {
+    try {
+      const files = fs.readdirSync(folderPath);
+      return files.map((file) => {
+        const filePath = path.join(folderPath, file);
+        return {
+          name: file,
+          path: filePath,
+          type: fs.statSync(filePath).isDirectory() ? 'folder' : 'file',
+        };
+      });
+    } catch (error) {
+      console.error('Ошибка чтения папки:', error);
+      return [];
+    }
+  });
+});
+
+// Закрываем приложение при закрытии всех окон (кроме macOS)
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+// Повторное открытие окна при активации (macOS)
 app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });

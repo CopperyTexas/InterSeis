@@ -1,8 +1,9 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { FileTreeComponent } from '../file-tree/file-tree.component';
 
 @Component({
   selector: 'app-main-page', // Указываем селектор компонента
-  imports: [], // В Standalone Components можно импортировать модули, но здесь пока пусто
+  imports: [FileTreeComponent], // В Standalone Components можно импортировать модули, но здесь пока пусто
   templateUrl: './main-page.component.html', // Путь к файлу шаблона
   styleUrl: './main-page.component.scss', // Путь к файлу стилей
 })

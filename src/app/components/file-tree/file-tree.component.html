@@ -1,0 +1,14 @@
+<div class="file-tree-container">
+  <!-- Кнопка выбора папки -->
+  <button (click)="selectFolder()">📁 Выбрать папку</button>
+
+  <!-- Индикация загрузки -->
+  <div *ngIf="isLoading">Загрузка...</div>
+
+  <!-- Рендеринг верхнего уровня дерева -->
+  <ul *ngIf="fileTree && fileTree.length">
+    <li *ngFor="let node of fileTree">
+      <app-file-tree-node [node]="node"></app-file-tree-node>
+    </li>
+  </ul>
+</div>
