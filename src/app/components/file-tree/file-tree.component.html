@@ -2,32 +2,32 @@
   <div class="flex gap-4 items-center p-2 border-b-4 border-primary">
     <button
       (click)="selectFolder()"
-      title="Выбрать папку"
       class="hover:scale-125 transition-transform duration-300"
+      title="Выбрать папку"
     >
       <span class="material-symbols-outlined"> folder </span>
     </button>
 
     <button
       (click)="createFolder()"
-      title="Создать папку"
       class="hover:scale-125 transition-transform duration-300"
+      title="Создать папку"
     >
       <span class="material-symbols-outlined"> create_new_folder </span>
     </button>
 
     <button
-      title="Удалить папку"
-      class="hover:scale-125 transition-transform duration-300"
       (click)="deleteCurrentFolder()"
+      class="hover:scale-125 transition-transform duration-300"
+      title="Удалить папку"
     >
-      <span class="material-symbols-outlined"> delete </span>
+      <span class="material-symbols-outlined"> folder_delete </span>
     </button>
   </div>
   <div>
     <app-folder-path
-      [currentPath]="currentFolderPath"
       (pathChanged)="onPathChanged($event)"
+      [currentPath]="currentFolderPath"
     >
     </app-folder-path>
   </div>
@@ -36,8 +36,8 @@
   <ul *ngIf="fileTree && fileTree.length">
     <li *ngFor="let node of fileTree">
       <app-file-tree-node
-        [node]="node"
         (folderSelected)="onFolderSelected($event)"
+        [node]="node"
       ></app-file-tree-node>
     </li>
   </ul>
