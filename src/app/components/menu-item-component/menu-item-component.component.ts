@@ -9,15 +9,21 @@ import { animate, style, transition, trigger } from '@angular/animations';
   templateUrl: './menu-item-component.component.html',
   styleUrl: './menu-item-component.component.scss',
   animations: [
+    // Анимация fadeInOut для плавного появления и исчезновения элемента
     trigger('fadeInOut', [
+      // Анимация появления (при добавлении элемента в DOM)
       transition(':enter', [
+        // Начальное состояние: элемент прозрачный и смещён вверх на 10px
         style({ opacity: 0, transform: 'translateY(-10px)' }),
+        // Плавное появление за 100мс до полной видимости и нормального положения
         animate(
           '100ms ease-out',
           style({ opacity: 1, transform: 'translateY(0)' }),
         ),
       ]),
+      // Анимация исчезновения (при удалении элемента из DOM)
       transition(':leave', [
+        // Плавное исчезновение за 100мс с уменьшением прозрачности и смещением вверх
         animate(
           '100ms ease-in',
           style({ opacity: 0, transform: 'translateY(-10px)' }),
@@ -27,21 +33,37 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
 })
 export class MenuItemComponent {
-  @Input() iconPath!: string; // Путь к иконке
-  @Input() title!: string; // Название пункта
-  @Input() submenu: string[] = []; // Подменю
+  // Input-параметр: путь к иконке, которая будет отображаться для пункта меню
+  @Input() iconPath!: string;
+  // Input-параметр: название пункта меню
+  @Input() title!: string;
+  // Input-параметр: массив строк для подменю
+  @Input() submenu: string[] = [];
+
+  // Флаг, указывающий, открыто ли меню (открытие подменю)
   isOpen = false;
+  // Флаг, указывающий, находится ли курсор над элементом меню
   isHovered = false;
+
+  // Инжектируем ElementRef для доступа к DOM-элементу компонента
   constructor(private eRef: ElementRef) {}
+
+  // Метод для переключения состояния меню: открытие/закрытие подменю
   toggleMenu() {
     this.isOpen = !this.isOpen;
   }
+
+  // Декоратор @HostListener отслеживает клики по документу.
+  // Если клик происходит вне элемента компонента, меню закрывается.
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
+    // Проверяем, содержит ли DOM-элемент компонента (eRef.nativeElement) целевой элемент события.
     if (!this.eRef.nativeElement.contains(event.target)) {
       this.isOpen = false;
     }
   }
 
+  // Данная строка выглядит не вполне корректно, поскольку переменная onmouseenter не определена.
+  // Возможно, вы планировали обработать событие наведения. Если это не требуется, можно удалить эту строку.
   protected readonly onmouseenter = onmouseenter;
 }

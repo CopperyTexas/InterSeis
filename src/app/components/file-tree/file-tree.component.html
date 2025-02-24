@@ -1,13 +1,45 @@
+<!-- Основной контейнер для дерева файлов -->
 <div class="file-tree-container">
-  <!-- Кнопка выбора папки -->
-  <button (click)="selectFolder()">📁 Выбрать папку</button>
+  <!-- Контейнер для кнопок управления (выбор и создание папки) -->
+  <div class="flex gap-4 items-center p-2 border-b-4 border-primary">
+    <!-- Кнопка для выбора папки -->
+    <button
+      (click)="selectFolder()"
+      title="Выбрать папку"
+      class="hover:scale-125 transition-transform duration-300"
+    >
+      <!-- Иконка Material Symbols для папки -->
+      <span class="material-symbols-outlined"> folder </span>
+    </button>
+    <!-- Кнопка для создания новой папки -->
+    <button
+      (click)="createFolder()"
+      title="Создать папку"
+      class="hover:scale-125 transition-transform duration-300"
+    >
+      <!-- Иконка Material Symbols для создания новой папки -->
+      <span class="material-symbols-outlined"> create_new_folder </span>
+    </button>
+    <!-- Пример кнопки для удаления текущей выбранной папки -->
+    <button
+      title="Удалить папку"
+      class="hover:scale-125 transition-transform duration-300"
+      (click)="deleteCurrentFolder()"
+    >
+      <span class="material-symbols-outlined"> delete </span>
+    </button>
+  </div>
 
-  <!-- Индикация загрузки -->
+  <!-- Блок индикатора загрузки. Отображается, если isLoading равен true -->
   <div *ngIf="isLoading">Загрузка...</div>
 
-  <!-- Рендеринг верхнего уровня дерева -->
+  <!-- Рендеринг дерева файлов:
+       Если массив fileTree существует и не пустой, выводим список узлов -->
   <ul *ngIf="fileTree && fileTree.length">
+    <!-- Перебираем каждый узел в массиве fileTree -->
     <li *ngFor="let node of fileTree">
+      <!-- Рекурсивный компонент для отображения одного узла дерева.
+           Передаём узел через Input-параметр [node] -->
       <app-file-tree-node [node]="node"></app-file-tree-node>
     </li>
   </ul>
