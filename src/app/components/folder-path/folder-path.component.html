@@ -1,0 +1,8 @@
+<nav class="folder-path">
+  <ng-container *ngFor="let segment of pathSegments; let i = index">
+    <span class=" hover:text-primary hover:cursor-pointer" (click)="navigateTo(i)">
+      {{ segment || '/' }}
+    </span>
+    <span *ngIf="i < pathSegments.length - 1"> / </span>
+  </ng-container>
+</nav>

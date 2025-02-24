@@ -5,11 +5,12 @@ import { FileNode } from '../../interfaces/file-node';
 import { FileTreeNodeComponent } from '../file-tree-node/file-tree-node.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FolderNameDialogComponent } from '../folder-name-dialog/folder-name-dialog.component';
+import { FolderPathComponent } from '../folder-path/folder-path.component';
 
 @Component({
   selector: 'app-file-tree',
   standalone: true,
-  imports: [CommonModule, FileTreeNodeComponent],
+  imports: [CommonModule, FileTreeNodeComponent, FolderPathComponent],
   templateUrl: './file-tree.component.html',
   styleUrls: ['./file-tree.component.scss'],
 })
@@ -78,17 +79,44 @@ export class FileTreeComponent {
       console.error('Нет выбранной папки для удаления.');
       return;
     }
-
     if (!confirm('Вы действительно хотите удалить эту папку?')) {
       return;
     }
     try {
       await this.fileService.deleteFolder(this.currentFolderPath);
-
-      this.fileTree = [];
-      this.currentFolderPath = null;
+      // Вычисляем родительский путь:
+      const parentPath = this.getParentPath(this.currentFolderPath);
+      this.currentFolderPath = parentPath;
+      // Обновляем дерево файлов, загружая содержимое родительской папки
+      this.fileTree = await this.fileService.getFolderContents(parentPath);
     } catch (error) {
       console.error('Ошибка при удалении папки:', error);
     }
+  }
+
+  onPathChanged(newPath: string) {
+    this.currentFolderPath = newPath;
+    this.fileService
+      .getFolderContents(newPath)
+      .then((content) => (this.fileTree = content))
+      .catch((error) => console.error('Ошибка при переходе:', error));
+  }
+
+  onFolderSelected(newPath: string) {
+    this.currentFolderPath = newPath;
+
+    this.fileService
+      .getFolderContents(newPath)
+      .then((content) => (this.fileTree = content))
+      .catch((error) => console.error('Ошибка при переходе:', error));
+  }
+
+  private getParentPath(currentPath: string): string {
+    // Нормализуем разделители (для Windows и Unix)
+    const normalized = currentPath.replace(/\\/g, '/');
+    const parts = normalized.split('/');
+    // Удаляем последний сегмент (название удаляемой папки)
+    parts.pop();
+    return parts.join('/');
   }
 }
