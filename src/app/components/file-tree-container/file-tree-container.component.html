@@ -1,35 +1,15 @@
-<div class="file-tree-container">
-  <!-- Заголовки вкладок -->
-  <div class="tab-headers flex items-center gap-4 mb-2">
-    <ng-container *ngFor="let tab of tabs">
-      <div class="tab-header flex items-center gap-1 p-1 border rounded">
-        <!-- Название вкладки -->
-        <span>{{ tab.title }}</span>
-        <!-- Кнопка удаления вкладки -->
-        <button
-          (click)="removeTab(tab.id)"
-          title="Удалить эту вкладку"
-          class="text-red-500 hover:text-red-700"
-        >
-          <span
-            class="material-symbols-outlined hover:scale-125 transition-transform duration-300"
-          >
-            cancel
-          </span>
-        </button>
-      </div>
-    </ng-container>
-    <!-- Кнопка добавления вкладки, показывается только если вкладок меньше двух -->
-    <button
-      *ngIf="tabs.length < 2"
-      (click)="addTab()"
-      class="btn-add-tab hover:scale-125 transition-transform duration-300"
-      title="Добавить вкладку"
-    >
-      <span class="material-symbols-outlined"> add_circle </span>
-    </button>
-  </div>
-
+<div class="file-tree-container p-3">
+  <!-- Кнопка добавления вкладки, показывается только если вкладок меньше двух -->
+  <button
+    (click)="addTab()"
+    *ngIf="tabs.length < 2"
+    class="flex gap-2 hover:scale-125 transition-transform duration-300"
+    title="Добавить вкладку"
+  >
+    <span class="material-symbols-outlined"> add_circle </span>
+    <p>Добавить вкладку</p>
+  </button>
+  <app-file-tab (tabRemove)="removeTab($event)" [tabs]="tabs"></app-file-tab>
   <!-- Контейнер для компонентов file-tree -->
   <div class="tabs grid grid-cols-1 gap-4">
     <ng-container *ngFor="let tab of tabs">

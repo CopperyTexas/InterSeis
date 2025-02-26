@@ -1,16 +1,3 @@
-.file-tree-container {
-  padding: 1rem;
-}
-
-.tab-headers {
-  /* Здесь можно стилизовать заголовки вкладок */
-}
-
-.tab-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 .material-symbols-outlined {
   font-variation-settings:
     'FILL' 0,
@@ -19,6 +6,7 @@
     'opsz' 24;
   color: #2c55b3;
 }
+
 .material-symbols-outlined:hover {
   font-variation-settings:
     'FILL' 0,

@@ -26,11 +26,13 @@ export class FileTreeComponent {
   currentFolderPath: string | null = null;
 
   constructor(private fileService: FileService) {}
+
   // Обработчик события из FileTreeOptionsComponent
   onFolderChanged(result: { folderPath: string; folderContent: FileNode[] }) {
     this.currentFolderPath = result.folderPath;
     this.fileTree = result.folderContent;
   }
+
   onPathChanged(newPath: string) {
     this.currentFolderPath = newPath;
     this.fileService

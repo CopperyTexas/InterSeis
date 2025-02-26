@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
 import { CommonModule } from '@angular/common';
+import { FileTabComponent } from '../file-tab/file-tab.component';
+import { FileTreeTab } from '../../interfaces/tab.model';
 
-interface FileTreeTab {
-  id: number;
-  title?: string;
-}
 @Component({
   selector: 'app-file-tree-container',
-  imports: [FileTreeComponent, CommonModule],
+  imports: [FileTreeComponent, CommonModule, FileTabComponent],
   templateUrl: './file-tree-container.component.html',
   styleUrl: './file-tree-container.component.scss',
 })
