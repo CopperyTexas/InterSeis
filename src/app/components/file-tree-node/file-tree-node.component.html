@@ -1,7 +1,7 @@
 <div
   (click)="onClick($event)"
   (dblclick)="onDoubleClick($event)"
-  class="node flex items-center gap-1"
+  class="node flex items-center gap-1 hover:text-primary"
 >
   <span *ngIf="node.type === 'folder'" class="material-symbols-outlined">
     {{ node.isOpen ? 'folder_open' : 'folder' }}

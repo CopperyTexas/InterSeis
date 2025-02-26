@@ -1,9 +1,9 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
-import { FileTreeComponent } from '../file-tree/file-tree.component';
+import { FileTreeContainerComponent } from '../file-tree-container/file-tree-container.component';
 
 @Component({
   selector: 'app-main-page',
-  imports: [FileTreeComponent],
+  imports: [FileTreeContainerComponent],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',
 })

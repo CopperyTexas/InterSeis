@@ -1,44 +1,18 @@
-<div class="file-tree-container">
-  <div class="flex gap-4 items-center p-2 border-b-4 border-primary">
-    <button
-      (click)="selectFolder()"
-      class="hover:scale-125 transition-transform duration-300"
-      title="Выбрать папку"
-    >
-      <span class="material-symbols-outlined"> folder </span>
-    </button>
+<app-file-tree-options
+  (folderChanged)="onFolderChanged($event)"
+></app-file-tree-options>
+<app-folder-path
+  (pathChanged)="onPathChanged($event)"
+  [currentPath]="currentFolderPath"
+>
+</app-folder-path>
 
-    <button
-      (click)="createFolder()"
-      class="hover:scale-125 transition-transform duration-300"
-      title="Создать папку"
-    >
-      <span class="material-symbols-outlined"> create_new_folder </span>
-    </button>
-
-    <button
-      (click)="deleteCurrentFolder()"
-      class="hover:scale-125 transition-transform duration-300"
-      title="Удалить папку"
-    >
-      <span class="material-symbols-outlined"> folder_delete </span>
-    </button>
-  </div>
-  <div>
-    <app-folder-path
-      (pathChanged)="onPathChanged($event)"
-      [currentPath]="currentFolderPath"
-    >
-    </app-folder-path>
-  </div>
-
-  <div *ngIf="isLoading">Загрузка...</div>
-  <ul *ngIf="fileTree && fileTree.length">
-    <li *ngFor="let node of fileTree">
-      <app-file-tree-node
-        (folderSelected)="onFolderSelected($event)"
-        [node]="node"
-      ></app-file-tree-node>
-    </li>
-  </ul>
-</div>
+<div *ngIf="isLoading">Загрузка...</div>
+<ul *ngIf="fileTree && fileTree.length">
+  <li *ngFor="let node of fileTree">
+    <app-file-tree-node
+      (folderSelected)="onFolderSelected($event)"
+      [node]="node"
+    ></app-file-tree-node>
+  </li>
+</ul>

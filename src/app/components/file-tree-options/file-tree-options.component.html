@@ -1,0 +1,28 @@
+<div class="flex gap-4 items-center p-2 border-b-4 border-primary">
+  <!-- Кнопка выбора папки -->
+  <button
+    (click)="selectFolder()"
+    class="hover:scale-125 transition-transform duration-300"
+    title="Выбрать папку"
+  >
+    <span class="material-symbols-outlined"> folder </span>
+  </button>
+
+  <!-- Кнопка создания папки -->
+  <button
+    (click)="createFolder()"
+    class="hover:scale-125 transition-transform duration-300"
+    title="Создать папку"
+  >
+    <span class="material-symbols-outlined"> create_new_folder </span>
+  </button>
+
+  <!-- Кнопка удаления папки -->
+  <button
+    (click)="deleteCurrentFolder()"
+    class="hover:scale-125 transition-transform duration-300"
+    title="Удалить папку"
+  >
+    <span class="material-symbols-outlined"> folder_delete </span>
+  </button>
+</div>
