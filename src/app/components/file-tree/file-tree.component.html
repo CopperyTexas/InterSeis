@@ -1,20 +1,22 @@
-<div>
-  <app-file-tab [tab]="tab"></app-file-tab>
-  <app-file-tree-options (folderChanged)="onFolderChanged($event)">
-  </app-file-tree-options>
+<div class="border-2 rounded-lg border-primary p-2">
+  <div>
+    <app-file-tab [tab]="tab"></app-file-tab>
+    <app-file-tree-options (folderChanged)="onFolderChanged($event)">
+    </app-file-tree-options>
 
-  <app-folder-path
-    (pathChanged)="onPathChanged($event)"
-    [currentPath]="currentFolderPath"
-  >
-  </app-folder-path>
+    <app-folder-path
+      (pathChanged)="onPathChanged($event)"
+      [currentPath]="currentFolderPath"
+    >
+    </app-folder-path>
+  </div>
+  <div *ngIf="isLoading">Загрузка...</div>
+  <ul *ngIf="fileTree && fileTree.length">
+    <li *ngFor="let node of fileTree">
+      <app-file-tree-node
+        (folderSelected)="onFolderSelected($event)"
+        [node]="node"
+      ></app-file-tree-node>
+    </li>
+  </ul>
 </div>
-<div *ngIf="isLoading">Загрузка...</div>
-<ul *ngIf="fileTree && fileTree.length">
-  <li *ngFor="let node of fileTree">
-    <app-file-tree-node
-      (folderSelected)="onFolderSelected($event)"
-      [node]="node"
-    ></app-file-tree-node>
-  </li>
-</ul>

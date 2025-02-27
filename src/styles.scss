@@ -39,5 +39,31 @@ body {
   overflow: hidden; // Убираем вертикальный скролл
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+/* Ширина полосы прокрутки */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Полоса прокрутки — трек */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Полоса прокрутки — ползунок */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* При наведении курсора */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

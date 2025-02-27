@@ -39,7 +39,7 @@ export class MainPageComponent {
 
     // Если перетаскивается левая панель (sidebar)
     if (this.resizing === 'left' && this.sidebar?.nativeElement) {
-      const newWidth = Math.max(200, Math.min(800, event.clientX)); // Ограничиваем размер от 200px до 800px
+      const newWidth = Math.max(400, Math.min(800, event.clientX)); // Ограничиваем размер от 400px до 800px
       this.renderer.setStyle(
         this.sidebar.nativeElement,
         'width',

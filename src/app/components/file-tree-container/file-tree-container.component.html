@@ -3,18 +3,19 @@
   <button
     (click)="addTab()"
     *ngIf="((tabs$ | async)?.length || 0) < 2"
-    class="flex gap-2 hover:scale-125 transition-transform duration-300"
+    class="flex gap-1 hover:text-primary border-2 rounded-lg p-2 hover:border-primary transition-transform duration-300"
     title="Добавить вкладку"
   >
     <span class="material-symbols-outlined"> add_circle </span>
     <p>Добавить вкладку</p>
   </button>
   <!-- Контейнер для компонентов file-tree -->
-  <div class="flex gap-4">
+  <div class="flex gap-4 mt-4">
     <ng-container *ngFor="let tab of tabs$ | async">
       <app-file-tree
         [tab]="tab"
         [activeTabId]="activeTabId$ | async"
+        class="w-full"
       ></app-file-tree>
     </ng-container>
   </div>

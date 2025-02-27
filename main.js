@@ -42,19 +42,26 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('readDirectory', async (_, folderPath) => {
+    const allowedExtensions = ['.PAS', '.pc', '.txt', '.tab', '.isp'];
     try {
       const files = await fs.readdir(folderPath);
       return await Promise.all(
         files.map(async (file) => {
           const filePath = path.join(folderPath, file);
           const stats = await fs.stat(filePath);
+          if (!stats.isDirectory()) {
+            const ext = path.extname(file).toLowerCase();
+            if (!allowedExtensions.includes(ext)) {
+              return null; // Помечаем как "неподходящий"
+            }
+          }
           return {
             name: file,
             path: filePath,
             type: stats.isDirectory() ? 'folder' : 'file',
           };
         }),
-      );
+      ).then((results) => results.filter((item) => item !== null));
     } catch (error) {
       console.error('Ошибка чтения папки:', error);
       return [];
