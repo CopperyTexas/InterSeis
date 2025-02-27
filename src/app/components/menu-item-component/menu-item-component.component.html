@@ -27,6 +27,7 @@
     <li
       *ngFor="let item of submenu"
       class="hover:bg-gray-300 cursor-pointer p-2 text-center select-none"
+      (click)="onMenuItemClick(item)"
     >
       {{ item }}
     </li>

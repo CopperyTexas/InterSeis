@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { NewProjectDialogComponent } from '../new-project-dialog/new-project-dialog.component';
 
 @Component({
   selector: 'app-menu-item',
@@ -46,7 +48,10 @@ export class MenuItemComponent {
   isHovered = false;
 
   // Инжектируем ElementRef для доступа к DOM-элементу компонента
-  constructor(private eRef: ElementRef) {}
+  constructor(
+    private eRef: ElementRef,
+    private dialog: MatDialog,
+  ) {}
 
   // Метод для переключения состояния меню: открытие/закрытие подменю
   toggleMenu() {
@@ -62,8 +67,25 @@ export class MenuItemComponent {
       this.isOpen = false;
     }
   }
+  // Обработчик клика по элементу меню
+  onMenuItemClick(item: string): void {
+    // Пример переключения диалоговых окон:
+    switch (item) {
+      case 'Новый проект':
+        this.dialog.open(NewProjectDialogComponent, {
+          width: '400px',
+          data: {
+            /* необходимые данные */
+          },
+        });
+        break;
 
-  // Данная строка выглядит не вполне корректно, поскольку переменная onmouseenter не определена.
-  // Возможно, вы планировали обработать событие наведения. Если это не требуется, можно удалить эту строку.
-  protected readonly onmouseenter = onmouseenter;
+      case 'Сохранить':
+        // Можно реализовать открытие другого окна или вызвать метод сохранения
+        break;
+      // Добавьте другие случаи по необходимости
+      default:
+        console.log('Выбрано:', item);
+    }
+  }
 }
