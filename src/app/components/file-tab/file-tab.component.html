@@ -1,16 +1,10 @@
-<div class="tab-headers flex items-center gap-4 mb-2">
-  <ng-container *ngFor="let tab of tabs">
-    <div class="tab-header flex items-center gap-1 p-1 border rounded">
-      <!-- Название вкладки -->
-      <span>{{ tab.title }}</span>
-      <!-- Кнопка удаления вкладки -->
-      <button (click)="removeTab(tab.id, $event)" title="Удалить эту вкладку">
-        <span
-          class="material-symbols-outlined hover:scale-125 transition-transform duration-300"
-        >
-          cancel
-        </span>
-      </button>
-    </div>
-  </ng-container>
+<div class="tab-header flex items-center gap-1 p-1 border rounded">
+  <span>{{ tab.title }}</span>
+  <button (click)="removeTab($event)" title="Удалить эту вкладку">
+    <span
+      class="material-symbols-outlined hover:scale-125 transition-transform duration-300"
+    >
+      cancel
+    </span>
+  </button>
 </div>

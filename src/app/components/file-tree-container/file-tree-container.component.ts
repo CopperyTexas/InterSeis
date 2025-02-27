@@ -1,36 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
 import { CommonModule } from '@angular/common';
-import { FileTabComponent } from '../file-tab/file-tab.component';
 import { FileTreeTab } from '../../interfaces/tab.model';
+import { combineLatest, map, Observable } from 'rxjs';
+import { TabService } from '../../services/tab.service';
 
 @Component({
   selector: 'app-file-tree-container',
-  imports: [FileTreeComponent, CommonModule, FileTabComponent],
+  imports: [FileTreeComponent, CommonModule],
   templateUrl: './file-tree-container.component.html',
   styleUrl: './file-tree-container.component.scss',
 })
-export class FileTreeContainerComponent {
+export class FileTreeContainerComponent implements OnInit {
   // Массив вкладок. Каждый объект имеет уникальный id.
-  tabs: FileTreeTab[] = [];
+  tabs$!: Observable<FileTreeTab[]>;
+  activeTabId$!: Observable<number | null>;
+  tabsWithActive$!: Observable<{
+    tabs: FileTreeTab[];
+    activeId: number | null;
+  }>;
+  constructor(private tabService: TabService) {}
+  ngOnInit(): void {
+    this.tabs$ = this.tabService.tabs$;
+    this.activeTabId$ = this.tabService.activeTabId$;
 
-  // Счетчик для генерации уникальных id.
-  private nextTabId = 1;
+    this.tabsWithActive$ = combineLatest([this.tabs$, this.activeTabId$]).pipe(
+      map(([tabs, activeId]) => ({ tabs, activeId })),
+    );
 
-  // Метод добавления вкладки, если их меньше двух.
+    // Добавляем первую вкладку по умолчанию, если нужно
+    this.tabService.addTab();
+  }
+
   addTab(): void {
-    if (this.tabs.length < 2) {
-      const newTab: FileTreeTab = {
-        id: this.nextTabId,
-        title: `Вкладка ${this.nextTabId}`,
-      };
-      this.tabs.push(newTab);
-      this.nextTabId++; // увеличиваем счетчик для следующей вкладки
-    }
+    this.tabService.addTab();
   }
 
-  // Метод удаления вкладки по id.
-  removeTab(id: number): void {
-    this.tabs = this.tabs.filter((tab) => tab.id !== id);
-  }
+  protected readonly length = length;
 }

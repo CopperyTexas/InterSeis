@@ -1,21 +1,23 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FileTreeTab } from '../../interfaces/tab.model';
+import { TabService } from '../../services/tab.service';
 
 @Component({
   selector: 'app-file-tab',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './file-tab.component.html',
-  styleUrls: ['./file-tab.component.scss'], // исправлено styleUrl на styleUrls
+  styleUrls: ['./file-tab.component.scss'],
 })
 export class FileTabComponent {
-  @Input() tabs: FileTreeTab[] = [];
-  @Output() tabRemove = new EventEmitter<number>();
+  @Input() tab!: FileTreeTab;
 
-  removeTab(id: number, event: Event): void {
+  constructor(private tabService: TabService) {}
+
+  removeTab(event: Event): void {
     event.stopPropagation();
-    this.tabRemove.emit(id);
+    this.tabService.removeTab(this.tab.id);
   }
 }

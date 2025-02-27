@@ -3,10 +3,12 @@ import { FolderNameDialogComponent } from '../folder-name-dialog/folder-name-dia
 import { FileNode } from '../../interfaces/file-node';
 import { FileService } from '../../services/file.service';
 import { MatDialog } from '@angular/material/dialog';
+import { TabService } from '../../services/tab.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-file-tree-options',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './file-tree-options.component.html',
   styleUrl: './file-tree-options.component.scss',
 })
@@ -23,6 +25,7 @@ export class FileTreeOptionsComponent {
   constructor(
     private fileService: FileService,
     private dialog: MatDialog,
+    private tabService: TabService,
   ) {}
   // Выбор папки через диалог, после чего сохраняется путь и содержимое папки
   async selectFolder(): Promise<void> {

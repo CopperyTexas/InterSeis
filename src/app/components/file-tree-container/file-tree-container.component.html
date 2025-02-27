@@ -1,20 +1,21 @@
 <div class="file-tree-container p-3">
-  <!-- Кнопка добавления вкладки, показывается только если вкладок меньше двух -->
+  <!-- Кнопка добавления вкладки -->
   <button
     (click)="addTab()"
-    *ngIf="tabs.length < 2"
+    *ngIf="((tabs$ | async)?.length || 0) < 2"
     class="flex gap-2 hover:scale-125 transition-transform duration-300"
     title="Добавить вкладку"
   >
     <span class="material-symbols-outlined"> add_circle </span>
     <p>Добавить вкладку</p>
   </button>
-  <app-file-tab (tabRemove)="removeTab($event)" [tabs]="tabs"></app-file-tab>
   <!-- Контейнер для компонентов file-tree -->
-  <div class="tabs grid grid-cols-1 gap-4">
-    <ng-container *ngFor="let tab of tabs">
-      <!-- Можно передать уникальные данные через Input, если требуется -->
-      <app-file-tree></app-file-tree>
+  <div class="flex gap-4">
+    <ng-container *ngFor="let tab of tabs$ | async">
+      <app-file-tree
+        [tab]="tab"
+        [activeTabId]="activeTabId$ | async"
+      ></app-file-tree>
     </ng-container>
   </div>
 </div>

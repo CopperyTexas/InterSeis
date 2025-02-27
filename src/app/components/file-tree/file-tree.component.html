@@ -1,12 +1,14 @@
-<app-file-tree-options
-  (folderChanged)="onFolderChanged($event)"
-></app-file-tree-options>
-<app-folder-path
-  (pathChanged)="onPathChanged($event)"
-  [currentPath]="currentFolderPath"
->
-</app-folder-path>
+<div>
+  <app-file-tab [tab]="tab"></app-file-tab>
+  <app-file-tree-options (folderChanged)="onFolderChanged($event)">
+  </app-file-tree-options>
 
+  <app-folder-path
+    (pathChanged)="onPathChanged($event)"
+    [currentPath]="currentFolderPath"
+  >
+  </app-folder-path>
+</div>
 <div *ngIf="isLoading">Загрузка...</div>
 <ul *ngIf="fileTree && fileTree.length">
   <li *ngFor="let node of fileTree">
