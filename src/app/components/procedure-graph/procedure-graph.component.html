@@ -1,0 +1,7 @@
+<div cdkDropList (cdkDropListDropped)="drop($event)" class="procedure-list">
+  <div *ngFor="let procedure of procedures" cdkDrag class="procedure-item">
+    <div class="procedure-content">
+      {{ procedure.name }} - {{ procedure.parameters | json }}
+    </div>
+  </div>
+</div>

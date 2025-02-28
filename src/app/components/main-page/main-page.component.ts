@@ -1,9 +1,10 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FileTreeContainerComponent } from '../file-tree-container/file-tree-container.component';
+import { ProcedureGraphComponent } from '../procedure-graph/procedure-graph.component';
 
 @Component({
   selector: 'app-main-page',
-  imports: [FileTreeContainerComponent],
+  imports: [FileTreeContainerComponent, ProcedureGraphComponent],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',
 })
