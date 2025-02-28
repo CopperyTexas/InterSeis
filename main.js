@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
+const os = require('os'); // для получения информации о пользователе и компьютере
 
 let mainWindow;
 
@@ -42,7 +43,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('readDirectory', async (_, folderPath) => {
-    const allowedExtensions = ['.PAS', '.pc', '.txt', '.tab', '.isp'];
+    const allowedExtensions = ['.PAS', '.pc', '.txt', '.tab', '.ips'];
     try {
       const files = await fs.readdir(folderPath);
       return await Promise.all(
@@ -65,6 +66,46 @@ app.whenReady().then(() => {
     } catch (error) {
       console.error('Ошибка чтения папки:', error);
       return [];
+    }
+  });
+
+  ipcMain.handle('create-project', async (event, projectData) => {
+    const { objectName, profileName, folderPath } = projectData;
+    const creationDate = new Date().toISOString();
+    const userInfo = os.userInfo();
+    const computerName = os.hostname();
+
+    // Формируем содержимое файла
+    const content = `Object: ${objectName}
+Profile: ${profileName}
+Creation Date: ${creationDate}
+User: ${userInfo.username}
+Computer: ${computerName}`;
+
+    // Генерируем имя файла: сначала очищенное название объекта, затем разделитель "_" и очищенное название профиля
+    const sanitizedObjectName = objectName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_');
+    const sanitizedProfileName = profileName.replace(
+      /[^a-zA-Zа-яА-Я0-9]/g,
+      '_',
+    );
+    const fileName = `${sanitizedObjectName}_${sanitizedProfileName}.ips`;
+    const filePath = path.join(folderPath, fileName);
+
+    try {
+      await fs.writeFile(filePath, content, 'utf-8');
+      return filePath; // возвращаем путь к созданному файлу
+    } catch (error) {
+      console.error('Ошибка создания файла проекта:', error);
+      throw error;
+    }
+  });
+  ipcMain.handle('read-project', async (event, filePath) => {
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      return content;
+    } catch (error) {
+      console.error('Ошибка чтения проекта:', error);
+      throw error;
     }
   });
 

@@ -1,23 +1,21 @@
-import { Component, Inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NewProjectData } from '../../interfaces/new-prodect-data.model';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-new-project-dialog',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -25,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIcon,
   ],
   templateUrl: './new-project-dialog.component.html',
   styleUrl: './new-project-dialog.component.scss',
@@ -34,19 +33,37 @@ export class NewProjectDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<NewProjectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: NewProjectData,
     private fb: FormBuilder,
+    private fileService: FileService,
   ) {
     this.projectForm = this.fb.group({
-      objectName: [data.objectName || '', Validators.required],
-      profileName: [data.profileName || '', Validators.required],
-      folderPath: [data.folderPath || '', Validators.required],
+      objectName: ['', Validators.required],
+      profileName: ['', Validators.required],
+      folderPath: ['', Validators.required],
     });
   }
 
-  onSubmit(): void {
+  async onSelectFolder(): Promise<void> {
+    try {
+      const result = await this.fileService.selectFolder();
+      if (result && result.folderPath) {
+        this.projectForm.patchValue({ folderPath: result.folderPath });
+      }
+    } catch (error) {
+      console.error('Ошибка выбора папки:', error);
+    }
+  }
+
+  async onSubmit(): Promise<void> {
     if (this.projectForm.valid) {
-      this.dialogRef.close(this.projectForm.value);
+      const projectData = this.projectForm.value;
+      try {
+        const filePath = await this.fileService.createProject(projectData);
+        console.log('Файл проекта создан:', filePath);
+        this.dialogRef.close({ ...projectData, filePath });
+      } catch (error) {
+        console.error('Ошибка создания проекта:', error);
+      }
     }
   }
 
