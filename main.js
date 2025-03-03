@@ -75,14 +75,16 @@ app.whenReady().then(() => {
     const userInfo = os.userInfo();
     const computerName = os.hostname();
 
-    // Формируем содержимое файла
-    const content = `Object: ${objectName}
-Profile: ${profileName}
-Creation Date: ${creationDate}
-User: ${userInfo.username}
-Computer: ${computerName}`;
+    // Формируем базовый объект проекта
+    const project = {
+      objectName,
+      profileName,
+      creationDate,
+      user: userInfo.username,
+      computer: computerName,
+      graph: [], // изначально пустой граф
+    };
 
-    // Генерируем имя файла: сначала очищенное название объекта, затем разделитель "_" и очищенное название профиля
     const sanitizedObjectName = objectName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_');
     const sanitizedProfileName = profileName.replace(
       /[^a-zA-Zа-яА-Я0-9]/g,
@@ -90,8 +92,8 @@ Computer: ${computerName}`;
     );
     const fileName = `${sanitizedObjectName}_${sanitizedProfileName}.ips`;
     const filePath = path.join(folderPath, fileName);
-
     try {
+      const content = JSON.stringify(project, null, 2);
       await fs.writeFile(filePath, content, 'utf-8');
       return filePath; // возвращаем путь к созданному файлу
     } catch (error) {
@@ -99,6 +101,14 @@ Computer: ${computerName}`;
       throw error;
     }
   });
+  ipcMain.handle('open-project-file', async () => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: [{ name: 'Project Files', extensions: ['ips'] }],
+    });
+    return result.filePaths[0] || null;
+  });
+
   ipcMain.handle('read-project', async (event, filePath) => {
     try {
       const content = await fs.readFile(filePath, 'utf-8');

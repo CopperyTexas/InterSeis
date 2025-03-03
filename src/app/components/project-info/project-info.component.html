@@ -1,0 +1,7 @@
+<div *ngIf="projectInfo$ | async as projectInfo" class="project-info">
+  <h2>Информация о проекте</h2>
+  <div><strong>Объект:</strong> {{ projectInfo.objectName }}</div>
+  <div><strong>Профиль:</strong> {{ projectInfo.profileName }}</div>
+  <div><strong>Дата создания:</strong> {{ projectInfo.creationDate }}</div>
+  <div><strong>Пользователь:</strong> {{ projectInfo.user }}</div>
+</div>

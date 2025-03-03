@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -6,6 +6,9 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { JsonPipe, NgForOf } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { ProjectService } from '../../services/project.service';
+import { Procedure } from '../../interfaces/procedure.model';
 
 @Component({
   selector: 'app-procedure-graph',
@@ -14,12 +17,30 @@ import { JsonPipe, NgForOf } from '@angular/common';
   templateUrl: './procedure-graph.component.html',
   styleUrl: './procedure-graph.component.scss',
 })
-export class ProcedureGraphComponent {
-  procedures = [
-    { name: 'Procedure 1', parameters: { param1: 'value1', param2: 123 } },
-    { name: 'Procedure 2', parameters: { param1: 'value2', param2: 456 } },
-    // Добавляйте процедуры по мере необходимости
-  ];
+export class ProcedureGraphComponent implements OnInit, OnDestroy {
+  procedures: Procedure[] = [];
+  private subscription!: Subscription;
+
+  constructor(private projectService: ProjectService) {}
+
+  ngOnInit(): void {
+    this.subscription = this.projectService.projectInfo$.subscribe(
+      (projectInfo) => {
+        // Предполагается, что projectInfo.graph имеет тип Procedure[]
+        if (projectInfo && projectInfo.graph) {
+          this.procedures = projectInfo.graph;
+        } else {
+          this.procedures = [];
+        }
+      },
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
   drop(event: CdkDragDrop<never[]>) {
     moveItemInArray(this.procedures, event.previousIndex, event.currentIndex);

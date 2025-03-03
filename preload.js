@@ -10,4 +10,5 @@ contextBridge.exposeInMainWorld('electron', {
   createProject: (projectData) =>
     ipcRenderer.invoke('create-project', projectData),
   readProject: (filePath) => ipcRenderer.invoke('read-project', filePath),
+  openProjectFile: () => ipcRenderer.invoke('open-project-file'),
 });

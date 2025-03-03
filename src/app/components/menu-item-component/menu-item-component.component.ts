@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { NewProjectDialogComponent } from '../new-project-dialog/new-project-dialog.component';
+import { OpenProjectDialogComponent } from '../open-project-dialog/open-project-dialog.component';
 
 @Component({
   selector: 'app-menu-item',
@@ -79,10 +80,18 @@ export class MenuItemComponent {
           },
         });
         break;
+      case 'Открыть':
+        this.dialog.open(OpenProjectDialogComponent, {
+          width: '400px',
+          data: {
+            /* данные, необходимые для сохранения проекта */
+          },
+        });
+        break;
 
       case 'Сохранить':
-        // Можно реализовать открытие другого окна или вызвать метод сохранения
         break;
+
       // Добавьте другие случаи по необходимости
       default:
         console.log('Выбрано:', item);

@@ -14,6 +14,7 @@ interface ElectronAPI {
     folderPath: string;
   }) => Promise<string>;
   readProject: (filePath: string) => Promise<string>;
+  openProjectFile: () => Promise<string | null>;
 }
 
 declare global {
@@ -40,13 +41,6 @@ export class FileService {
     if (!folderPath) return null;
     const folderContent = await this.getFolderContents(folderPath);
     return { folderPath, folderContent };
-  }
-  async readProject(filePath: string): Promise<string> {
-    if (!window.electron) {
-      console.error('Electron API не загружен.');
-      throw new Error('Electron API не загружен.');
-    }
-    return await window.electron.readProject(filePath);
   }
 
   async getFolderContents(
@@ -80,9 +74,28 @@ export class FileService {
     folderPath: string;
   }): Promise<string> {
     if (!window.electron) {
-      console.error('Electron API не загружен.');
       throw new Error('Electron API не загружен.');
     }
     return await window.electron.createProject(projectData);
+  }
+  async selectProjectFile(): Promise<string | null> {
+    if (!window.electron) {
+      console.error('Electron API не загружен.');
+      return null;
+    }
+    // Здесь можно вызвать IPC-метод для открытия диалога выбора файла с фильтром .ips
+    return await window.electron.openProjectFile();
+  }
+  async readProject(filePath: string): Promise<any> {
+    if (!window.electron) {
+      throw new Error('Electron API не загружен.');
+    }
+    const content = await window.electron.readProject(filePath);
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      console.error('Ошибка парсинга содержимого проекта:', e);
+      throw e;
+    }
   }
 }
