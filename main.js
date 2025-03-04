@@ -82,7 +82,8 @@ app.whenReady().then(() => {
       creationDate,
       user: userInfo.username,
       computer: computerName,
-      graph: [], // изначально пустой граф
+      filePath: folderPath,
+      graph: [],
     };
 
     const sanitizedObjectName = objectName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_');

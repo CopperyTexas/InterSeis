@@ -60,19 +60,10 @@ export class NewProjectDialogComponent {
     if (this.projectForm.valid) {
       const projectData = this.projectForm.value;
       try {
-        // Создаем файл проекта и получаем его путь
         const filePath = await this.fileService.createProject(projectData);
         console.log('Файл проекта создан:', filePath);
-
-        // Читаем содержимое созданного файла, чтобы получить объект проекта
         const projectContent = await this.fileService.readProject(filePath);
-        // Если вы сохраняете проект в формате JSON, убедитесь, что readProject возвращает уже распарсенный объект
-        // или выполните JSON.parse(projectContent) здесь
-
-        // Обновляем глобальное состояние проекта через ProjectService
         this.projectService.setProjectInfo(projectContent);
-
-        // Закрываем диалог и возвращаем объект проекта
         this.dialogRef.close(projectContent);
       } catch (error) {
         console.error('Ошибка создания/открытия проекта:', error);
