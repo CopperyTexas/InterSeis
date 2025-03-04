@@ -1,14 +1,14 @@
 <div
   (click)="onClick($event)"
   (dblclick)="onDoubleClick($event)"
-  class="node flex items-center gap-1 hover:text-primary"
+  class="node flex items-center gap-1"
 >
   <span *ngIf="node.type === 'folder'" class="material-symbols-outlined">
     {{ node.isOpen ? 'folder_open' : 'folder' }}
   </span>
-  <span *ngIf="node.type === 'file'" class="material-symbols-outlined"
-    >docs</span
-  >
+  <span *ngIf="node.type === 'file'" class="material-symbols-outlined">
+    docs
+  </span>
   {{ node.name }}
 </div>
 <ul *ngIf="node.type === 'folder' && node.isOpen && node.children">

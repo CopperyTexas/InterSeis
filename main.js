@@ -102,6 +102,16 @@ app.whenReady().then(() => {
       throw error;
     }
   });
+  ipcMain.handle('read-text-file', async (event, filePath) => {
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      return content;
+    } catch (error) {
+      console.error('Ошибка чтения файла:', error);
+      throw error;
+    }
+  });
+
   ipcMain.handle('open-project-file', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openFile'],

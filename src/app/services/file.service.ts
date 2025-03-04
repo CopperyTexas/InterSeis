@@ -15,6 +15,7 @@ interface ElectronAPI {
   }) => Promise<string>;
   readProject: (filePath: string) => Promise<string>;
   openProjectFile: () => Promise<string | null>;
+  readTextFile: (filePath: string) => Promise<string>;
 }
 
 declare global {
@@ -51,6 +52,13 @@ export class FileService {
       return [];
     }
     return await window.electron.readDirectory(folderPath);
+  }
+  async readTextFile(filePath: string): Promise<string> {
+    if (!window.electron) {
+      throw new Error('Electron API не загружен.');
+    }
+    // Предполагаем, что в основном процессе у вас настроен IPC-обработчик 'read-text-file'
+    return await window.electron.readTextFile(filePath);
   }
 
   async createFolder(folderPath: string, folderName: string): Promise<void> {

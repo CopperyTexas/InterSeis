@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FileNode } from '../../interfaces/file-node';
 import { FileService } from '../../services/file.service';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { ReadFileDialogComponent } from '../read-file-dialog/read-file-dialog.component';
 
 @Component({
   selector: 'app-file-tree-node',
@@ -15,7 +17,10 @@ export class FileTreeNodeComponent {
   @Output() folderSelected = new EventEmitter<string>();
   private clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private fileService: FileService) {}
+  constructor(
+    private fileService: FileService,
+    private dialog: MatDialog,
+  ) {}
 
   onClick(event: MouseEvent) {
     event.stopPropagation();
@@ -24,15 +29,30 @@ export class FileTreeNodeComponent {
       this.clickTimeout = null;
     }, 250);
   }
-
-  onDoubleClick(event: MouseEvent) {
-    event.stopPropagation();
-    if (this.clickTimeout) {
-      clearTimeout(this.clickTimeout);
-      this.clickTimeout = null;
+  async openFile(): Promise<void> {
+    if (this.node.type !== 'file') return;
+    try {
+      const content = await this.fileService.readTextFile(this.node.path);
+      this.dialog.open(ReadFileDialogComponent, {
+        width: '600px',
+        data: { content },
+      });
+    } catch (error) {
+      console.error('Ошибка при открытии файла:', error);
     }
+  }
+  async onDoubleClick(event: MouseEvent): Promise<void> {
+    event.stopPropagation();
     if (this.node.type === 'folder') {
-      this.folderSelected.emit(this.node.path);
+      // Если узел - папка, переключаем её состояние
+      await this.toggleNode();
+    } else if (this.node.type === 'file') {
+      // Для файла проверяем расширение
+      const lowerName = this.node.name.toLowerCase();
+      if (lowerName.endsWith('.ips') || lowerName.endsWith('.txt')) {
+        // Если формат поддерживается, открываем файл в диалоговом окне
+        await this.openFileInDialog();
+      }
     }
   }
 
@@ -59,6 +79,17 @@ export class FileTreeNodeComponent {
           this.collapseChildren(child);
         }
       }
+    }
+  }
+  private async openFileInDialog(): Promise<void> {
+    try {
+      const content = await this.fileService.readTextFile(this.node.path);
+      this.dialog.open(ReadFileDialogComponent, {
+        width: '600px',
+        data: { content },
+      });
+    } catch (error) {
+      console.error('Ошибка при открытии файла:', error);
     }
   }
 }
