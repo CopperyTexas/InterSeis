@@ -50,6 +50,7 @@ export class FileTreeComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
   private loadFolder(folderPath: string): void {
+    this.currentFolderPath = folderPath; // обновляем текущий путь
     this.isLoading = true;
     this.fileService
       .getFolderContents(folderPath)

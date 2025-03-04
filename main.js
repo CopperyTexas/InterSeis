@@ -1,7 +1,9 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
-const os = require('os'); // для получения информации о пользователе и компьютере
+const os = require('os');
+const chardet = require('chardet');
+const iconv = require('iconv-lite');
 
 let mainWindow;
 
@@ -71,7 +73,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('create-project', async (event, projectData) => {
     const { objectName, profileName, folderPath } = projectData;
-    const creationDate = new Date().toISOString();
+    const creationDate = new Date().toLocaleString('ru-RU');
     const userInfo = os.userInfo();
     const computerName = os.hostname();
 
@@ -104,7 +106,17 @@ app.whenReady().then(() => {
   });
   ipcMain.handle('read-text-file', async (event, filePath) => {
     try {
-      const content = await fs.readFile(filePath, 'utf-8');
+      const buffer = await fs.readFile(filePath);
+      // Определяем кодировку
+      const encoding = chardet.detect(buffer);
+      console.log(`Определенная кодировка для ${filePath}:`, encoding);
+      let content;
+      if (encoding && encoding.toLowerCase() !== 'utf-8') {
+        // Если кодировка не UTF‑8, конвертируем в UTF‑8
+        content = iconv.decode(buffer, encoding);
+      } else {
+        content = buffer.toString('utf-8');
+      }
       return content;
     } catch (error) {
       console.error('Ошибка чтения файла:', error);
@@ -122,7 +134,19 @@ app.whenReady().then(() => {
 
   ipcMain.handle('read-project', async (event, filePath) => {
     try {
-      const content = await fs.readFile(filePath, 'utf-8');
+      // Считываем файл как Buffer
+      const buffer = await fs.readFile(filePath);
+      // Определяем кодировку
+      const encoding = chardet.detect(buffer);
+      console.log('Определенная кодировка:', encoding);
+
+      // Если кодировка не UTF-8, конвертируем в UTF-8
+      let content;
+      if (encoding && encoding.toLowerCase() !== 'utf-8') {
+        content = iconv.decode(buffer, encoding);
+      } else {
+        content = buffer.toString('utf-8');
+      }
       return content;
     } catch (error) {
       console.error('Ошибка чтения проекта:', error);

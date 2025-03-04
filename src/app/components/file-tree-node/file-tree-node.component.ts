@@ -15,6 +15,7 @@ import { ReadFileDialogComponent } from '../read-file-dialog/read-file-dialog.co
 export class FileTreeNodeComponent {
   @Input() node!: FileNode;
   @Output() folderSelected = new EventEmitter<string>();
+
   private clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
@@ -22,41 +23,37 @@ export class FileTreeNodeComponent {
     private dialog: MatDialog,
   ) {}
 
-  onClick(event: MouseEvent) {
+  onClick(event: MouseEvent): void {
     event.stopPropagation();
+    // Запускаем таймер для обработки одиночного клика
     this.clickTimeout = setTimeout(() => {
       this.toggleNode();
       this.clickTimeout = null;
     }, 250);
   }
-  async openFile(): Promise<void> {
-    if (this.node.type !== 'file') return;
-    try {
-      const content = await this.fileService.readTextFile(this.node.path);
-      this.dialog.open(ReadFileDialogComponent, {
-        width: '600px',
-        data: { content },
-      });
-    } catch (error) {
-      console.error('Ошибка при открытии файла:', error);
-    }
-  }
+
   async onDoubleClick(event: MouseEvent): Promise<void> {
     event.stopPropagation();
+    // Если существует таймер одиночного клика, отменяем его
+    if (this.clickTimeout) {
+      clearTimeout(this.clickTimeout);
+      this.clickTimeout = null;
+    }
     if (this.node.type === 'folder') {
-      // Если узел - папка, переключаем её состояние
-      await this.toggleNode();
+      // При двойном клике на папку вместо простого toggle отправляем событие,
+      // чтобы родительский компонент сделал эту папку главной (навигация в неё)
+      this.folderSelected.emit(this.node.path);
     } else if (this.node.type === 'file') {
-      // Для файла проверяем расширение
+      // Для файла проверяем поддерживаемое расширение
       const lowerName = this.node.name.toLowerCase();
       if (lowerName.endsWith('.ips') || lowerName.endsWith('.txt')) {
-        // Если формат поддерживается, открываем файл в диалоговом окне
         await this.openFileInDialog();
       }
     }
   }
 
-  async toggleNode() {
+  private async toggleNode(): Promise<void> {
+    // Логика переключения состояния папки (открыть/закрыть)
     this.node.isOpen = !this.node.isOpen;
     if (this.node.isOpen && !this.node.children) {
       try {
@@ -81,6 +78,7 @@ export class FileTreeNodeComponent {
       }
     }
   }
+
   private async openFileInDialog(): Promise<void> {
     try {
       const content = await this.fileService.readTextFile(this.node.path);

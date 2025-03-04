@@ -9,7 +9,7 @@
   <span *ngIf="node.type === 'file'" class="material-symbols-outlined">
     docs
   </span>
-  {{ node.name }}
+  <span class="hover:text-primary">{{ node.name }}</span>
 </div>
 <ul *ngIf="node.type === 'folder' && node.isOpen && node.children">
   <li *ngFor="let child of node.children">
