@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 import { HeaderComponent } from './components/header/header.component';
-import { MainPageComponent } from './components/main-page/main-page.component';
+import { ProjectWindowComponent } from './components/project-window/project-window.component';
 
 @Component({
   selector: 'app-root',
-  imports: [HeaderComponent, MainPageComponent],
+  imports: [HeaderComponent, ProjectWindowComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

@@ -1,7 +1,14 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FileTreeContainerComponent } from '../file-tree-container/file-tree-container.component';
 import { ProcedureGraphComponent } from '../procedure-graph/procedure-graph.component';
 import { ProjectInfoComponent } from '../project-info/project-info.component';
+import { ProjectWindow } from '../../interfaces/project-window.model';
 
 @Component({
   selector: 'app-main-page',
@@ -77,4 +84,5 @@ export class MainPageComponent {
     document.removeEventListener('mousemove', this.resize);
     document.removeEventListener('mouseup', this.stopResizing);
   };
+  @Input() projectWindow!: ProjectWindow;
 }

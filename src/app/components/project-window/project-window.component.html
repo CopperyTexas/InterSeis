@@ -1,0 +1,8 @@
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" class="w-full">
+  <mat-tab
+    *ngFor="let window of projectWindows"
+    [label]="window.projectInfo ? window.projectInfo.objectName : 'Новое окно'"
+  >
+    <app-main-page [projectWindow]="window"></app-main-page>
+  </mat-tab>
+</mat-tab-group>
