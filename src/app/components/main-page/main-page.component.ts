@@ -5,18 +5,15 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FileTreeContainerComponent } from '../file-tree-container/file-tree-container.component';
+
 import { ProcedureGraphComponent } from '../procedure-graph/procedure-graph.component';
 import { ProjectInfoComponent } from '../project-info/project-info.component';
 import { ProjectWindow } from '../../interfaces/project-window.model';
+import { FileTreeComponent } from '../file-tree/file-tree.component';
 
 @Component({
   selector: 'app-main-page',
-  imports: [
-    FileTreeContainerComponent,
-    ProcedureGraphComponent,
-    ProjectInfoComponent,
-  ],
+  imports: [ProcedureGraphComponent, ProjectInfoComponent, FileTreeComponent],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',
 })

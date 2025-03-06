@@ -1,14 +1,13 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FileService } from '../../services/file.service';
 import { CommonModule } from '@angular/common';
 import { FileNode } from '../../interfaces/file-node';
 import { FileTreeNodeComponent } from '../file-tree-node/file-tree-node.component';
 import { FolderPathComponent } from '../folder-path/folder-path.component';
 import { FileTreeOptionsComponent } from '../file-tree-options/file-tree-options.component';
-import { FileTabComponent } from '../file-tab/file-tab.component';
+
 import { FileTreeTab } from '../../interfaces/tab.model';
-import { Subscription } from 'rxjs';
-import { ProjectService } from '../../services/project.service';
+import { ProjectInfo } from '../../interfaces/project-info.model';
 
 @Component({
   selector: 'app-file-tree',
@@ -18,39 +17,31 @@ import { ProjectService } from '../../services/project.service';
     FileTreeNodeComponent,
     FolderPathComponent,
     FileTreeOptionsComponent,
-    FileTabComponent,
   ],
   templateUrl: './file-tree.component.html',
   styleUrls: ['./file-tree.component.scss'],
 })
-export class FileTreeComponent implements OnInit, OnDestroy {
+export class FileTreeComponent implements OnInit {
+  @Input() projectInfo!: ProjectInfo | null;
   @Input() tab!: FileTreeTab;
   @Input() activeTabId!: number | null;
+  // Значение currentFolderPath устанавливается один раз при инициализации,
+  // а затем обновляется пользователем через навигационные события
+  currentFolderPath: string | null = null;
   fileTree: FileNode[] = [];
   isLoading = false;
-  currentFolderPath: string | null = null;
-  private subscription!: Subscription;
 
-  constructor(
-    private fileService: FileService,
-    private projectService: ProjectService,
-  ) {}
+  constructor(private fileService: FileService) {}
 
   ngOnInit(): void {
-    // Подписываемся на изменения информации о проекте
-    this.subscription = this.projectService.projectInfo$.subscribe(
-      (projectInfo) => {
-        if (projectInfo && projectInfo.filePath) {
-          this.loadFolder(projectInfo.filePath);
-        }
-      },
-    );
+    if (this.projectInfo && this.projectInfo.filePath) {
+      // Устанавливаем путь проекта один раз при открытии
+      this.currentFolderPath = this.projectInfo.filePath;
+      this.loadFolder(this.currentFolderPath);
+    }
   }
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+
   private loadFolder(folderPath: string): void {
-    this.currentFolderPath = folderPath; // обновляем текущий путь
     this.isLoading = true;
     this.fileService
       .getFolderContents(folderPath)
@@ -58,13 +49,17 @@ export class FileTreeComponent implements OnInit, OnDestroy {
       .catch((error) => console.error('Ошибка при загрузке папки:', error))
       .finally(() => (this.isLoading = false));
   }
-  // Обработчик события из FileTreeOptionsComponent
-  onFolderChanged(result: { folderPath: string; folderContent: FileNode[] }) {
+
+  // Эти методы позволят пользователю навигировать по папкам вручную:
+  onFolderChanged(result: {
+    folderPath: string;
+    folderContent: FileNode[];
+  }): void {
     this.currentFolderPath = result.folderPath;
     this.fileTree = result.folderContent;
   }
 
-  onPathChanged(newPath: string) {
+  onPathChanged(newPath: string): void {
     this.currentFolderPath = newPath;
     this.fileService
       .getFolderContents(newPath)
@@ -72,9 +67,8 @@ export class FileTreeComponent implements OnInit, OnDestroy {
       .catch((error) => console.error('Ошибка при переходе:', error));
   }
 
-  onFolderSelected(newPath: string) {
+  onFolderSelected(newPath: string): void {
     this.currentFolderPath = newPath;
-
     this.fileService
       .getFolderContents(newPath)
       .then((content) => (this.fileTree = content))

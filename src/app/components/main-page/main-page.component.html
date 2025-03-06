@@ -8,12 +8,15 @@
     >
       Файлы обработки
     </div>
-    <app-file-tree-container
+    <app-file-tree
+      [projectInfo]="projectWindow.projectInfo"
       class="flex-1 overflow-auto select-none w-100%"
-    ></app-file-tree-container>
+    ></app-file-tree>
 
     <div class="p-4 bg-primary text-white select-none h-52">
-      <app-project-info></app-project-info>
+      <app-project-info
+        [projectInfo]="projectWindow.projectInfo"
+      ></app-project-info>
     </div>
   </div>
 

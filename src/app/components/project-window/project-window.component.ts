@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import { ProjectService } from '../../services/project.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectInfo } from '../../interfaces/project-info.model';
-import { NewProjectDialogComponent } from '../new-project-dialog/new-project-dialog.component';
 
 @Component({
   selector: 'app-project-window',
@@ -58,21 +57,5 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
         projectInfo,
       };
     }
-  }
-
-  // Метод для открытия диалогового окна создания проекта для активного окна
-  openNewProjectDialog(): void {
-    const dialogRef = this.dialog.open(NewProjectDialogComponent, {
-      width: '400px',
-    });
-    dialogRef.afterClosed().subscribe((result: ProjectInfo) => {
-      if (result) {
-        // Обновляем только окно с индексом selectedTabIndex
-        this.updateProjectInfo(
-          this.projectWindows[this.selectedTabIndex].id,
-          result,
-        );
-      }
-    });
   }
 }
