@@ -1,21 +1,9 @@
 <div class="flex items-center">
-  <mat-tab>
-    <button
-      mat-icon-button
-      color="primary"
-      (click)="addTab()"
-      matTooltip="Добавить окно"
-      style="margin-left: 8px"
-    >
-      <mat-icon>add</mat-icon>
-    </button>
-  </mat-tab>
-
   <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="w-full">
     <mat-tab *ngFor="let window of projectWindows; let index = index">
       <ng-template mat-tab-label>
-        <mat-icon>folder</mat-icon>
-        <span>
+        <mat-icon class="mr-2 text-primary">folder</mat-icon>
+        <span class="text-primary mr-8">
           {{
             window.projectInfo
               ? window.projectInfo.objectName +
@@ -30,10 +18,20 @@
           (click)="removeTab(index, $event)"
           matTooltip="Закрыть окно"
         >
-          <mat-icon>close</mat-icon>
+          <mat-icon class="text-primary">close</mat-icon>
         </button>
       </ng-template>
       <app-main-page [projectWindow]="window"></app-main-page>
     </mat-tab>
   </mat-tab-group>
+
+  <button
+    mat-icon-button
+    color="primary"
+    (click)="addTab()"
+    matTooltip="Добавить окно"
+    style="margin-left: 8px"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
