@@ -1,8 +1,39 @@
-<mat-tab-group [(selectedIndex)]="selectedTabIndex" class="w-full">
-  <mat-tab
-    *ngFor="let window of projectWindows"
-    [label]="window.projectInfo ? window.projectInfo.objectName : 'Новое окно'"
-  >
-    <app-main-page [projectWindow]="window"></app-main-page>
+<div class="flex items-center">
+  <mat-tab>
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="addTab()"
+      matTooltip="Добавить окно"
+      style="margin-left: 8px"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
   </mat-tab>
-</mat-tab-group>
+
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="w-full">
+    <mat-tab *ngFor="let window of projectWindows; let index = index">
+      <ng-template mat-tab-label>
+        <mat-icon>folder</mat-icon>
+        <span>
+          {{
+            window.projectInfo
+              ? window.projectInfo.objectName +
+                ' / ' +
+                window.projectInfo.profileName
+              : 'Новое окно'
+          }}
+        </span>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeTab(index, $event)"
+          matTooltip="Закрыть окно"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-template>
+      <app-main-page [projectWindow]="window"></app-main-page>
+    </mat-tab>
+  </mat-tab-group>
+</div>
