@@ -1,37 +1,43 @@
-<div class="flex items-center">
-  <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="w-full">
-    <mat-tab *ngFor="let window of projectWindows; let index = index">
-      <ng-template mat-tab-label>
-        <mat-icon class="mr-2 text-primary">folder</mat-icon>
-        <span class="text-primary mr-8">
-          {{
-            window.projectInfo
-              ? window.projectInfo.objectName +
-                ' / ' +
-                window.projectInfo.profileName
-              : 'Новое окно'
-          }}
-        </span>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="removeTab(index, $event)"
-          matTooltip="Закрыть окно"
-        >
-          <mat-icon class="text-primary">close</mat-icon>
-        </button>
-      </ng-template>
-      <app-main-page [projectWindow]="window"></app-main-page>
-    </mat-tab>
-  </mat-tab-group>
+<div class="project-window-wrapper">
+  <!-- Навигационная панель -->
+  <div class="flex items-center bg-primary">
+    <!-- Группа вкладок -->
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+      <mat-tab *ngFor="let window of projectWindows; let i = index">
+        <ng-template mat-tab-label>
+          <mat-icon class="mr-2 text-primary">folder</mat-icon>
+          <span class="text-primary mx-2">
+            {{
+              window.projectInfo
+                ? window.projectInfo.objectName +
+                  ' / ' +
+                  window.projectInfo.profileName
+                : 'Новое окно'
+            }}
+          </span>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="removeTab(i, $event)"
+            matTooltip="Закрыть окно"
+            class="close-button"
+          >
+            <mat-icon class="text-primary">close</mat-icon>
+          </button>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+    <!-- Кнопка добавления окна, размещённая рядом с вкладками -->
+    <app-add-window-button
+      (addWindow)="addTab()"
+      class="bg-white rounded-full w-10 h-10 flex items-center justify-center"
+    ></app-add-window-button>
+  </div>
 
-  <button
-    mat-icon-button
-    color="primary"
-    (click)="addTab()"
-    matTooltip="Добавить окно"
-    style="margin-left: 8px"
-  >
-    <mat-icon>add</mat-icon>
-  </button>
+  <!-- Область содержимого активного окна -->
+  <div class="window-content">
+    <app-main-page
+      [projectWindow]="projectWindows[selectedTabIndex]"
+    ></app-main-page>
+  </div>
 </div>

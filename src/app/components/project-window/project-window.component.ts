@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProjectWindow } from '../../interfaces/project-window.model';
-import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { NgForOf } from '@angular/common';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { Subscription } from 'rxjs';
@@ -10,18 +10,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
 
 @Component({
   selector: 'app-project-window',
   imports: [
-    MatTabGroup,
-    MatTab,
     NgForOf,
     MainPageComponent,
     MatIcon,
     MatIconButton,
     MatTooltip,
-    MatTabLabel,
+    MatTabsModule,
+    AddWindowButtonComponent,
   ],
   templateUrl: './project-window.component.html',
   styleUrl: './project-window.component.scss',

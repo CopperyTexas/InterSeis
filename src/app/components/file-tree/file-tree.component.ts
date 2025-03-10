@@ -25,8 +25,7 @@ export class FileTreeComponent implements OnInit {
   @Input() projectInfo!: ProjectInfo | null;
   @Input() tab!: FileTreeTab;
   @Input() activeTabId!: number | null;
-  // Значение currentFolderPath устанавливается один раз при инициализации,
-  // а затем обновляется пользователем через навигационные события
+
   currentFolderPath: string | null = null;
   fileTree: FileNode[] = [];
   isLoading = false;
