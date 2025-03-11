@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FileService } from '../../services/file.service';
 import { CommonModule } from '@angular/common';
 import { FileNode } from '../../interfaces/file-node';
@@ -21,20 +21,22 @@ import { ProjectInfo } from '../../interfaces/project-info.model';
   templateUrl: './file-tree.component.html',
   styleUrls: ['./file-tree.component.scss'],
 })
-export class FileTreeComponent implements OnInit {
+export class FileTreeComponent implements OnChanges {
   @Input() projectInfo!: ProjectInfo | null;
   @Input() tab!: FileTreeTab;
   @Input() activeTabId!: number | null;
-
   currentFolderPath: string | null = null;
   fileTree: FileNode[] = [];
   isLoading = false;
 
   constructor(private fileService: FileService) {}
 
-  ngOnInit(): void {
-    if (this.projectInfo && this.projectInfo.filePath) {
-      // Устанавливаем путь проекта один раз при открытии
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['projectInfo'] &&
+      this.projectInfo &&
+      this.projectInfo.filePath
+    ) {
       this.currentFolderPath = this.projectInfo.filePath;
       this.loadFolder(this.currentFolderPath);
     }
@@ -49,7 +51,7 @@ export class FileTreeComponent implements OnInit {
       .finally(() => (this.isLoading = false));
   }
 
-  // Эти методы позволят пользователю навигировать по папкам вручную:
+  // Методы для навигации по папкам
   onFolderChanged(result: {
     folderPath: string;
     folderContent: FileNode[];

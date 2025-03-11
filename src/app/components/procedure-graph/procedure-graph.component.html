@@ -1,7 +1,15 @@
 <div cdkDropList (cdkDropListDropped)="drop($event)" class="procedure-list">
-  <div *ngFor="let procedure of procedures" cdkDrag class="procedure-item">
+  <div
+    *ngFor="let procedure of procedures; let i = index"
+    cdkDrag
+    class="procedure-item"
+  >
     <div class="procedure-content">
-      {{ procedure.name }} - {{ procedure.parameters | json }}
+      {{ i + 1 }}. {{ procedure.name }} - {{ procedure.parameters | json }}
     </div>
   </div>
 </div>
+<!-- Кнопка для добавления процедуры, можно сделать отдельным компонентом или оставить здесь -->
+<button mat-raised-button color="primary" (click)="addProcedure()">
+  Добавить процедуру
+</button>

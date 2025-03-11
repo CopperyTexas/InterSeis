@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ProjectInfo } from '../interfaces/project-info.model';
+import { Procedure } from '../interfaces/procedure.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +17,16 @@ export class ProjectService {
 
   getCurrentProjectInfo(): ProjectInfo | null {
     return this.projectInfoSubject.value;
+  }
+  // Новый метод для обновления поля graph в текущем проекте
+  updateProjectGraph(newGraph: Procedure[]): void {
+    const currentProject = this.getCurrentProjectInfo();
+    if (currentProject) {
+      const updatedProject: ProjectInfo = {
+        ...currentProject,
+        graph: newGraph,
+      };
+      this.setProjectInfo(updatedProject);
+    }
   }
 }

@@ -4,6 +4,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { NewProjectDialogComponent } from '../new-project-dialog/new-project-dialog.component';
 import { OpenProjectDialogComponent } from '../open-project-dialog/open-project-dialog.component';
+import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
 
 @Component({
   selector: 'app-menu-item',
@@ -54,21 +55,22 @@ export class MenuItemComponent {
     private dialog: MatDialog,
   ) {}
 
-  // Метод для переключения состояния меню: открытие/закрытие подменю
   toggleMenu() {
     this.isOpen = !this.isOpen;
   }
 
-  // Декоратор @HostListener отслеживает клики по документу.
-  // Если клик происходит вне элемента компонента, меню закрывается.
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
-    // Проверяем, содержит ли DOM-элемент компонента (eRef.nativeElement) целевой элемент события.
     if (!this.eRef.nativeElement.contains(event.target)) {
       this.isOpen = false;
     }
   }
-  // Обработчик клика по элементу меню
+  saveProject(): void {
+    // Здесь реализуйте сохранение проекта.
+    // Например, получите актуальные данные из ProjectService или напрямую из компонента,
+    // затем вызовите FileService, который сохраняет проект в файл.
+    console.log('Проект сохранен');
+  }
   onMenuItemClick(item: string): void {
     // Пример переключения диалоговых окон:
     switch (item) {
@@ -89,8 +91,22 @@ export class MenuItemComponent {
         });
         break;
 
-      case 'Сохранить':
+      case 'Сохранить': { // Открываем диалог подтверждения сохранения
+        const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
+          width: '300px',
+          data: {
+            /* можно передать данные, если нужно */
+          },
+        });
+        dialogRef.afterClosed().subscribe((confirmed) => {
+          if (confirmed) {
+            // Если подтверждено, вызываем метод сохранения проекта
+            // Например, можно вызвать FileService.saveProject(projectData) или ProjectService.saveProject()
+            this.saveProject();
+          }
+        });
         break;
+      }
 
       // Добавьте другие случаи по необходимости
       default:
