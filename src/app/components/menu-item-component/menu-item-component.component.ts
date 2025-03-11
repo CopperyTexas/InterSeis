@@ -1,4 +1,10 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +13,7 @@ import { OpenProjectDialogComponent } from '../open-project-dialog/open-project-
 import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
 import { ProjectService } from '../../services/project.service';
 import { FileService } from '../../services/file.service';
+import { ProcedureGraphComponent } from '../procedure-graph/procedure-graph.component';
 
 @Component({
   selector: 'app-menu-item',
@@ -40,6 +47,7 @@ import { FileService } from '../../services/file.service';
 })
 export class MenuItemComponent {
   // Input-параметр: путь к иконке, которая будет отображаться для пункта меню
+  @ViewChild('procedureGraph') procedureGraph!: ProcedureGraphComponent;
   @Input() iconPath!: string;
   // Input-параметр: название пункта меню
   @Input() title!: string;
@@ -52,6 +60,7 @@ export class MenuItemComponent {
   isHovered = false;
 
   // Инжектируем ElementRef для доступа к DOM-элементу компонента
+
   constructor(
     private eRef: ElementRef,
     private dialog: MatDialog,
@@ -91,25 +100,24 @@ export class MenuItemComponent {
         break;
 
       case 'Сохранить': {
-        // Открываем диалог подтверждения сохранения
         const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
-          width: '400px',
+          width: '300px',
           data: {},
         });
-        dialogRef.afterClosed().subscribe((confirmed) => {
+        dialogRef.afterClosed().subscribe((confirmed: boolean) => {
           if (confirmed) {
-            // Получаем текущий проект из ProjectService
+            // Получаем актуальный проект из ProjectService
             const projectData = this.projectService.getCurrentProjectInfo();
             if (projectData) {
               this.fileService
                 .saveProject(projectData)
-                .then((filePath) => {
+                .then((filePath: string) => {
                   console.log('Проект успешно сохранён:', filePath);
-                  // Можно уведомить пользователя, что сохранение прошло успешно
+                  // Здесь можно вывести уведомление для пользователя, например, через MatSnackBar
                 })
-                .catch((error) =>
-                  console.error('Ошибка сохранения проекта:', error),
-                );
+                .catch((error: any) => {
+                  console.error('Ошибка сохранения проекта:', error);
+                });
             }
           }
         });

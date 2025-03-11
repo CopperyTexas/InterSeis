@@ -10,11 +10,21 @@ import { CommonModule } from '@angular/common';
 export class FolderPathComponent {
   @Input() currentPath: string | null = null;
   @Output() pathChanged = new EventEmitter<string>();
+
   get pathSegments(): string[] {
     if (!this.currentPath) return [];
     const normalized = this.currentPath.replace(/\\/g, '/');
-    return normalized.split('/');
+    // Разбиваем путь и фильтруем пустые элементы
+    const segments = normalized
+      .split('/')
+      .filter((segment) => segment.length > 0);
+    // Если путь начинается с '/', добавляем корневой разделитель в начало
+    if (normalized.startsWith('/')) {
+      segments.unshift('/');
+    }
+    return segments;
   }
+
   navigateTo(index: number): void {
     const newPath = this.pathSegments.slice(0, index + 1).join('/');
     this.pathChanged.emit(newPath);

@@ -18,7 +18,8 @@ export class ProjectService {
   getCurrentProjectInfo(): ProjectInfo | null {
     return this.projectInfoSubject.value;
   }
-  // Новый метод для обновления поля graph в текущем проекте
+
+  // Метод для обновления поля graph в текущем проекте
   updateProjectGraph(newGraph: Procedure[]): void {
     const currentProject = this.getCurrentProjectInfo();
     if (currentProject) {

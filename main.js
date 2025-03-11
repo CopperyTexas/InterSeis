@@ -4,8 +4,6 @@ const fs = require('fs').promises;
 const os = require('os');
 const chardet = require('chardet');
 const iconv = require('iconv-lite');
-const fileName = `${sanitizedObjectName}_${sanitizedProfileName}.ips`;
-const filePath = path.join(folderPath, fileName);
 
 let mainWindow;
 
@@ -180,11 +178,25 @@ app.whenReady().then(() => {
   });
 });
 ipcMain.handle('save-project', async (event, projectData) => {
-  const filePath = projectData.filePath; // предполагаем, что filePath присутствует в объекте проекта
-  const content = JSON.stringify(projectData, null, 2);
   try {
-    await fs.writeFile(filePath, content, 'utf-8');
-    return filePath; // возвращаем путь к сохранённому файлу
+    let targetPath = projectData.filePath; // предполагается, что это путь к папке
+    const stat = await fs.stat(targetPath).catch(() => null);
+    if (stat && stat.isDirectory()) {
+      // Если projectData содержит objectName и profileName, формируем имя файла:
+      const sanitizedObjectName = projectData.objectName.replace(
+        /[^a-zA-Zа-яА-Я0-9]/g,
+        '_',
+      );
+      const sanitizedProfileName = projectData.profileName.replace(
+        /[^a-zA-Zа-яА-Я0-9]/g,
+        '_',
+      );
+      const fileName = `${sanitizedObjectName}_${sanitizedProfileName}.ips`;
+      targetPath = path.join(targetPath, fileName);
+    }
+    const content = JSON.stringify(projectData, null, 2);
+    await fs.writeFile(targetPath, content, 'utf-8');
+    return targetPath;
   } catch (error) {
     console.error('Ошибка сохранения проекта:', error);
     throw error;

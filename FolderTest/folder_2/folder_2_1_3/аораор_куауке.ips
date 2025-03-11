@@ -1,0 +1,45 @@
+{
+  "objectName": "аораор",
+  "profileName": "куауке",
+  "creationDate": "11.03.2025, 22:42:54",
+  "user": "denisglebov",
+  "computer": "MacBook-Air-Denis.local",
+  "filePath": "/Users/denisglebov/Desktop/InterSeis/FolderTest/folder_2/folder_2_1_3",
+  "graph": [
+    {
+      "name": "Procedure 759",
+      "parameters": {
+        "param1": 50,
+        "param2": 26
+      }
+    },
+    {
+      "name": "Procedure 420",
+      "parameters": {
+        "param1": 21,
+        "param2": 37
+      }
+    },
+    {
+      "name": "Procedure 292",
+      "parameters": {
+        "param1": 29,
+        "param2": 59
+      }
+    },
+    {
+      "name": "Procedure 379",
+      "parameters": {
+        "param1": 31,
+        "param2": 97
+      }
+    },
+    {
+      "name": "Procedure 767",
+      "parameters": {
+        "param1": 76,
+        "param2": 64
+      }
+    }
+  ]
+}

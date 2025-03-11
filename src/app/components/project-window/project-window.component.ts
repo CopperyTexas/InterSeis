@@ -11,6 +11,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
+import { Procedure } from '../../interfaces/procedure.model';
 
 @Component({
   selector: 'app-project-window',
@@ -85,6 +86,16 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
         ...this.projectWindows[index],
         projectInfo,
       };
+    }
+  }
+
+  // Пример метода в компоненте, управляющем окном:
+  updateWindowGraph(newGraph: Procedure[]): void {
+    const window = this.projectWindows[this.selectedTabIndex];
+    if (window && window.projectInfo) {
+      window.projectInfo = { ...window.projectInfo, graph: newGraph };
+      // При сохранении проекта потом этот обновлённый объект используется для записи файла
+      this.projectService.setProjectInfo(window.projectInfo);
     }
   }
 }

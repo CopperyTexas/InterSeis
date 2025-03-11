@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -6,10 +6,9 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { JsonPipe, NgForOf } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { ProjectService } from '../../services/project.service';
 import { Procedure } from '../../interfaces/procedure.model';
 import { MatButton } from '@angular/material/button';
+import { ProjectInfo } from '../../interfaces/project-info.model';
 
 @Component({
   selector: 'app-procedure-graph',
@@ -18,48 +17,48 @@ import { MatButton } from '@angular/material/button';
   templateUrl: './procedure-graph.component.html',
   styleUrl: './procedure-graph.component.scss',
 })
-export class ProcedureGraphComponent implements OnInit, OnDestroy {
+export class ProcedureGraphComponent implements OnChanges {
+  // Получаем данные проекта через Input (конкретного окна)
+  @Input() projectInfo!: ProjectInfo | null;
   procedures: Procedure[] = [];
-  private subscription!: Subscription;
 
-  constructor(private projectService: ProjectService) {}
-
-  ngOnInit(): void {
-    // Инициализируем локальный массив процедур из глобального состояния проекта,
-    // если это необходимо. Если каждый проект (окно) передаёт свои данные, лучше получать их через @Input.
-    this.subscription = this.projectService.projectInfo$.subscribe(
-      (projectInfo) => {
-        if (projectInfo && projectInfo.graph) {
-          this.procedures = [...projectInfo.graph];
-        } else {
-          this.procedures = [];
-        }
-      },
-    );
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['projectInfo'] && this.projectInfo) {
+      // Инициализируем локальный массив процедур из projectInfo.graph
+      this.procedures = this.projectInfo.graph
+        ? [...this.projectInfo.graph]
+        : [];
     }
+    console.log('изменения записаны', changes['projectInfo']);
   }
 
   drop(event: CdkDragDrop<Procedure[]>): void {
     moveItemInArray(this.procedures, event.previousIndex, event.currentIndex);
-    // Здесь можно сохранить новый порядок в глобальное состояние при сохранении проекта
-    // Например, вызвать: this.projectService.updateProjectGraph(this.procedures);
+    this.syncGraph();
   }
 
   addProcedure(): void {
-    // Пример добавления процедуры (можно заменить на вызов диалога для ввода параметров)
-    const newProcedure: {
-      name: string;
-      parameters: { param1: number; param2: number };
-    } = {
-      name: 'Новая процедура',
-      parameters: { param1: 0, param2: 0 },
+    // Генерируем случайное имя, например, "Procedure" с числовым суффиксом
+    const randomName = 'Procedure ' + Math.floor(Math.random() * 1000);
+    // Генерируем случайные значения для параметров (например, от 0 до 99)
+    const randomParam1 = Math.floor(Math.random() * 100);
+    const randomParam2 = Math.floor(Math.random() * 100);
+
+    const newProcedure: Procedure = {
+      name: randomName,
+      parameters: { param1: randomParam1, param2: randomParam2 },
     };
-    // @ts-ignore
+
     this.procedures.push(newProcedure);
+    this.syncGraph();
+    console.log('Процедура добавлена', newProcedure, this.projectInfo?.graph);
+  }
+
+  private syncGraph(): void {
+    if (this.projectInfo) {
+      // Обновляем поле graph в projectInfo,
+      // создавая новую копию массива, чтобы изменения точно отразились
+      this.projectInfo.graph = [...this.procedures];
+    }
   }
 }

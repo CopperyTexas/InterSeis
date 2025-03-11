@@ -19,9 +19,10 @@ import { FileTreeComponent } from '../file-tree/file-tree.component';
 })
 export class MainPageComponent {
   // Получаем ссылки на DOM-элементы с помощью ViewChild
+  @ViewChild('procedureGraph') procedureGraph!: ProcedureGraphComponent;
   @ViewChild('sidebar', { static: false }) sidebar!: ElementRef; // Левая панель
   @ViewChild('procedures', { static: false }) procedures!: ElementRef; // Правая панель
-
+  @Input() projectWindow!: ProjectWindow;
   // Переменная для отслеживания, какую границу пользователь перетаскивает
   private resizing: 'left' | 'right' | null = null;
 
@@ -81,5 +82,4 @@ export class MainPageComponent {
     document.removeEventListener('mousemove', this.resize);
     document.removeEventListener('mouseup', this.stopResizing);
   };
-  @Input() projectWindow!: ProjectWindow;
 }

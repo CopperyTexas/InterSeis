@@ -1,5 +1,4 @@
 export interface Procedure {
   name: string;
-  filePath: string;
-  parameters: Record<string, number>;
+  parameters: { param1: number; param2: number };
 }
