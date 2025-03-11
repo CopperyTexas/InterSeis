@@ -4,6 +4,8 @@ const fs = require('fs').promises;
 const os = require('os');
 const chardet = require('chardet');
 const iconv = require('iconv-lite');
+const fileName = `${sanitizedObjectName}_${sanitizedProfileName}.ips`;
+const filePath = path.join(folderPath, fileName);
 
 let mainWindow;
 
@@ -176,6 +178,17 @@ app.whenReady().then(() => {
       throw err;
     }
   });
+});
+ipcMain.handle('save-project', async (event, projectData) => {
+  const filePath = projectData.filePath; // предполагаем, что filePath присутствует в объекте проекта
+  const content = JSON.stringify(projectData, null, 2);
+  try {
+    await fs.writeFile(filePath, content, 'utf-8');
+    return filePath; // возвращаем путь к сохранённому файлу
+  } catch (error) {
+    console.error('Ошибка сохранения проекта:', error);
+    throw error;
+  }
 });
 
 app.on('window-all-closed', () => {

@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { NewProjectDialogComponent } from '../new-project-dialog/new-project-dialog.component';
 import { OpenProjectDialogComponent } from '../open-project-dialog/open-project-dialog.component';
 import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
+import { ProjectService } from '../../services/project.service';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-menu-item',
@@ -53,6 +55,8 @@ export class MenuItemComponent {
   constructor(
     private eRef: ElementRef,
     private dialog: MatDialog,
+    private projectService: ProjectService,
+    private fileService: FileService,
   ) {}
 
   toggleMenu() {
@@ -65,12 +69,7 @@ export class MenuItemComponent {
       this.isOpen = false;
     }
   }
-  saveProject(): void {
-    // Здесь реализуйте сохранение проекта.
-    // Например, получите актуальные данные из ProjectService или напрямую из компонента,
-    // затем вызовите FileService, который сохраняет проект в файл.
-    console.log('Проект сохранен');
-  }
+
   onMenuItemClick(item: string): void {
     // Пример переключения диалоговых окон:
     switch (item) {
@@ -91,18 +90,27 @@ export class MenuItemComponent {
         });
         break;
 
-      case 'Сохранить': { // Открываем диалог подтверждения сохранения
+      case 'Сохранить': {
+        // Открываем диалог подтверждения сохранения
         const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
-          width: '300px',
-          data: {
-            /* можно передать данные, если нужно */
-          },
+          width: '400px',
+          data: {},
         });
         dialogRef.afterClosed().subscribe((confirmed) => {
           if (confirmed) {
-            // Если подтверждено, вызываем метод сохранения проекта
-            // Например, можно вызвать FileService.saveProject(projectData) или ProjectService.saveProject()
-            this.saveProject();
+            // Получаем текущий проект из ProjectService
+            const projectData = this.projectService.getCurrentProjectInfo();
+            if (projectData) {
+              this.fileService
+                .saveProject(projectData)
+                .then((filePath) => {
+                  console.log('Проект успешно сохранён:', filePath);
+                  // Можно уведомить пользователя, что сохранение прошло успешно
+                })
+                .catch((error) =>
+                  console.error('Ошибка сохранения проекта:', error),
+                );
+            }
           }
         });
         break;

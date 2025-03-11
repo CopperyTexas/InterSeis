@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ProjectInfo } from '../interfaces/project-info.model';
 
 interface ElectronAPI {
   openFolderDialog: () => Promise<string | null>;
@@ -16,6 +17,7 @@ interface ElectronAPI {
   readProject: (filePath: string) => Promise<string>;
   openProjectFile: () => Promise<string | null>;
   readTextFile: (filePath: string) => Promise<string>;
+  saveProject: (projectData: ProjectInfo) => Promise<string>;
 }
 
 declare global {
@@ -86,6 +88,13 @@ export class FileService {
     }
     return await window.electron.createProject(projectData);
   }
+  async saveProject(projectData: ProjectInfo): Promise<string> {
+    if (!window.electron) {
+      throw new Error('Electron API не загружен.');
+    }
+    return await window.electron.saveProject(projectData);
+  }
+
   async selectProjectFile(): Promise<string | null> {
     if (!window.electron) {
       console.error('Electron API не загружен.');
