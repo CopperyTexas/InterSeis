@@ -32,23 +32,16 @@ export class FileTreeComponent implements OnChanges {
   constructor(private fileService: FileService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes['projectInfo'] &&
-      this.projectInfo &&
-      this.projectInfo.filePath
-    ) {
-      this.currentFolderPath = this.projectInfo.filePath;
-      this.loadFolder(this.currentFolderPath);
+    if (changes['projectInfo']) {
+      if (this.projectInfo && this.projectInfo.filePath) {
+        this.currentFolderPath = this.projectInfo.filePath;
+        this.loadFolder(this.currentFolderPath);
+      } else {
+        // Если projectInfo отсутствует или filePath не задан, очищаем дерево
+        this.currentFolderPath = null;
+        this.fileTree = [];
+      }
     }
-  }
-
-  private loadFolder(folderPath: string): void {
-    this.isLoading = true;
-    this.fileService
-      .getFolderContents(folderPath)
-      .then((content) => (this.fileTree = content))
-      .catch((error) => console.error('Ошибка при загрузке папки:', error))
-      .finally(() => (this.isLoading = false));
   }
 
   // Методы для навигации по папкам
@@ -74,5 +67,14 @@ export class FileTreeComponent implements OnChanges {
       .getFolderContents(newPath)
       .then((content) => (this.fileTree = content))
       .catch((error) => console.error('Ошибка при переходе:', error));
+  }
+
+  private loadFolder(folderPath: string): void {
+    this.isLoading = true;
+    this.fileService
+      .getFolderContents(folderPath)
+      .then((content) => (this.fileTree = content))
+      .catch((error) => console.error('Ошибка при загрузке папки:', error))
+      .finally(() => (this.isLoading = false));
   }
 }

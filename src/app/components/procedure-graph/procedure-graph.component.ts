@@ -23,13 +23,15 @@ export class ProcedureGraphComponent implements OnChanges {
   procedures: Procedure[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['projectInfo'] && this.projectInfo) {
-      // Инициализируем локальный массив процедур из projectInfo.graph
-      this.procedures = this.projectInfo.graph
-        ? [...this.projectInfo.graph]
-        : [];
+    if (changes['projectInfo']) {
+      if (this.projectInfo) {
+        this.procedures = this.projectInfo.graph
+          ? [...this.projectInfo.graph]
+          : [];
+      } else {
+        this.procedures = [];
+      }
     }
-    console.log('изменения записаны', changes['projectInfo']);
   }
 
   drop(event: CdkDragDrop<Procedure[]>): void {
