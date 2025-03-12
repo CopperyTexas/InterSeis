@@ -12,6 +12,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
 import { Procedure } from '../../interfaces/procedure.model';
+import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-project-window',
@@ -39,6 +41,7 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
   constructor(
     private projectService: ProjectService,
     private dialog: MatDialog,
+    private fileService: FileService,
   ) {}
 
   ngOnInit(): void {
@@ -69,11 +72,57 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
   }
 
   removeTab(index: number, event: MouseEvent): void {
-    event.stopPropagation(); // отменяем переключение вкладки
+    event.stopPropagation(); // чтобы клик по кнопке закрытия не переключал вкладку
+
     if (this.projectWindows.length > 1) {
-      this.projectWindows.splice(index, 1);
-      if (this.selectedTabIndex >= this.projectWindows.length) {
-        this.selectedTabIndex = this.projectWindows.length - 1;
+      const windowToRemove = this.projectWindows[index];
+      if (!windowToRemove.projectInfo) {
+        this.projectWindows.splice(index, 1);
+        if (this.selectedTabIndex >= this.projectWindows.length) {
+          this.selectedTabIndex = this.projectWindows.length - 1;
+        }
+      } else {
+        // Открываем диалог подтверждения сохранения
+        const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
+          width: '300px',
+          data: {}, // не передаём никаких данных
+        });
+
+        dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+          // Если пользователь подтвердил сохранение
+          if (confirmed) {
+            const projectData = this.projectWindows[index].projectInfo;
+            if (projectData) {
+              // Сохраняем проект для этого окна
+              this.fileService
+                .saveProject(projectData)
+                .then((filePath: string) => {
+                  console.log('Проект успешно сохранён:', filePath);
+                  // Затем удаляем вкладку
+                  this.projectWindows.splice(index, 1);
+                  if (this.selectedTabIndex >= this.projectWindows.length) {
+                    this.selectedTabIndex = this.projectWindows.length - 1;
+                  }
+                })
+                .catch((error: any) => {
+                  console.error('Ошибка сохранения проекта:', error);
+                  // При ошибке можно решить, удалять ли окно или нет
+                });
+            } else {
+              // Если проект не загружен, просто удаляем вкладку
+              this.projectWindows.splice(index, 1);
+              if (this.selectedTabIndex >= this.projectWindows.length) {
+                this.selectedTabIndex = this.projectWindows.length - 1;
+              }
+            }
+          } else {
+            // Если пользователь решил не сохранять, просто удаляем вкладку
+            this.projectWindows.splice(index, 1);
+            if (this.selectedTabIndex >= this.projectWindows.length) {
+              this.selectedTabIndex = this.projectWindows.length - 1;
+            }
+          }
+        });
       }
     }
   }

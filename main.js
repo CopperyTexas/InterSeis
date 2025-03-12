@@ -35,6 +35,41 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  // Обработчик события закрытия главного окна
+  mainWindow.on('close', async (event) => {
+    // Предотвращаем стандартное закрытие окна
+    event.preventDefault();
+
+    // Показываем диалоговое окно для подтверждения сохранения
+    const { response } = await dialog.showMessageBox(mainWindow, {
+      type: 'question',
+      buttons: ['Да', 'Нет', 'Отмена'],
+      defaultId: 0,
+      cancelId: 2,
+      message: 'Сохранить все открытые проекты?',
+      detail:
+        'Если вы выберете "Да", все открытые проекты будут сохранены перед закрытием.',
+    });
+
+    if (response === 0) {
+      // Да
+      // Отправляем IPC-сообщение в рендерер для сохранения всех проектов
+      mainWindow.webContents.send('save-all-projects');
+
+      // Здесь можно дождаться ответа от рендерера или закрыть окно сразу, если сохранение выполняется асинхронно
+      // Например, вы можете слушать событие "all-projects-saved"
+      // mainWindow.once('all-projects-saved', () => mainWindow.destroy());
+
+      // Если хотите закрыть сразу:
+      mainWindow.destroy();
+    } else if (response === 1) {
+      // Нет
+      // Закрываем окно без сохранения
+      mainWindow.destroy();
+    } else {
+      // Отмена – не закрываем окно
+    }
+  });
   createWindow();
 
   ipcMain.handle('openFolderDialog', async () => {
