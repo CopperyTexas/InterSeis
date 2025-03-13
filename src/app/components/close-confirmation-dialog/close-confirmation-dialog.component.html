@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Закрыть приложение?</h2>
+<mat-dialog-content>
+  <p>Сохранить все открытые проекты перед закрытием?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog('cancel')">Отмена</button>
+  <button mat-button color="warn" (click)="closeDialog('dont-save')">
+    Не сохранять
+  </button>
+  <button mat-button color="primary" (click)="closeDialog('save')">
+    Сохранить
+  </button>
+</mat-dialog-actions>

@@ -13,4 +13,14 @@ contextBridge.exposeInMainWorld('electron', {
   openProjectFile: () => ipcRenderer.invoke('open-project-file'),
   readTextFile: (filePath) => ipcRenderer.invoke('read-text-file', filePath),
   saveProject: (projectData) => ipcRenderer.invoke('save-project', projectData),
+
+  on: (channel, callback) => {
+    ipcRenderer.on(channel, (_event, ...args) => callback(...args));
+  },
+  removeListener: (channel, callback) => {
+    ipcRenderer.removeListener(channel, callback);
+  },
+  send: (channel, ...args) => {
+    ipcRenderer.send(channel, ...args);
+  },
 });

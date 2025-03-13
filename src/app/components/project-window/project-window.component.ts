@@ -11,10 +11,11 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
-import { Procedure } from '../../interfaces/procedure.model';
 import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
 import { FileService } from '../../services/file.service';
+import { CloseConfirmationDialogComponent } from '../close-confirmation-dialog/close-confirmation-dialog.component';
 
+declare const window: any; // Для работы с Electron API
 @Component({
   selector: 'app-project-window',
   imports: [
@@ -45,92 +46,91 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Подписываемся на изменения в ProjectService и обновляем только активное окно
+    // Подписка на обновление данных проекта
     this.subscription = this.projectService.projectInfo$.subscribe(
       (projectInfo) => {
         if (projectInfo) {
-          const activeWindow = this.projectWindows[this.selectedTabIndex];
-          this.updateProjectInfo(activeWindow.id, projectInfo);
+          this.updateProjectInfo(
+            this.projectWindows[this.selectedTabIndex].id,
+            projectInfo,
+          );
         }
       },
     );
+
+    // Подписка на событие "сохранить все проекты" от Electron
+    if (window.electron) {
+      window.electron.on('save-all-projects', () =>
+        this.handleSaveAllProjects(),
+      );
+      window.electron.on('show-close-confirmation', () =>
+        this.showCloseConfirmation(),
+      );
+    }
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+
+    if (window.electron) {
+      window.electron.removeListener(
+        'save-all-projects',
+        this.handleSaveAllProjects,
+      );
+      window.electron.removeListener(
+        'show-close-confirmation',
+        this.showCloseConfirmation,
+      );
+    }
   }
 
   addTab(): void {
-    // Создаем новое окно
     const newWindow: ProjectWindow = {
       id: this.nextWindowId++,
       projectInfo: null,
     };
     this.projectWindows.push(newWindow);
-    // Переключаем фокус на новое окно
     this.selectedTabIndex = this.projectWindows.length - 1;
   }
 
   removeTab(index: number, event: MouseEvent): void {
-    event.stopPropagation(); // чтобы клик по кнопке закрытия не переключал вкладку
+    event.stopPropagation();
 
     if (this.projectWindows.length > 1) {
       const windowToRemove = this.projectWindows[index];
+
       if (!windowToRemove.projectInfo) {
-        this.projectWindows.splice(index, 1);
-        if (this.selectedTabIndex >= this.projectWindows.length) {
-          this.selectedTabIndex = this.projectWindows.length - 1;
-        }
+        this.closeTab(index);
       } else {
-        // Открываем диалог подтверждения сохранения
         const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
           width: '300px',
-          data: {}, // не передаём никаких данных
+          data: {},
         });
 
         dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-          // Если пользователь подтвердил сохранение
           if (confirmed) {
-            const projectData = this.projectWindows[index].projectInfo;
-            if (projectData) {
-              // Сохраняем проект для этого окна
-              this.fileService
-                .saveProject(projectData)
-                .then((filePath: string) => {
-                  console.log('Проект успешно сохранён:', filePath);
-                  // Затем удаляем вкладку
-                  this.projectWindows.splice(index, 1);
-                  if (this.selectedTabIndex >= this.projectWindows.length) {
-                    this.selectedTabIndex = this.projectWindows.length - 1;
-                  }
-                })
-                .catch((error: any) => {
-                  console.error('Ошибка сохранения проекта:', error);
-                  // При ошибке можно решить, удалять ли окно или нет
-                });
-            } else {
-              // Если проект не загружен, просто удаляем вкладку
-              this.projectWindows.splice(index, 1);
-              if (this.selectedTabIndex >= this.projectWindows.length) {
-                this.selectedTabIndex = this.projectWindows.length - 1;
-              }
-            }
+            this.fileService
+              .saveProject(windowToRemove.projectInfo!)
+              .then(() => this.closeTab(index))
+              .catch((error) => console.error('Ошибка сохранения:', error));
           } else {
-            // Если пользователь решил не сохранять, просто удаляем вкладку
-            this.projectWindows.splice(index, 1);
-            if (this.selectedTabIndex >= this.projectWindows.length) {
-              this.selectedTabIndex = this.projectWindows.length - 1;
-            }
+            this.closeTab(index);
           }
         });
       }
     }
   }
 
+  private closeTab(index: number): void {
+    this.projectWindows.splice(index, 1);
+    if (this.selectedTabIndex >= this.projectWindows.length) {
+      this.selectedTabIndex = this.projectWindows.length - 1;
+    }
+  }
+
   updateProjectInfo(windowId: number, projectInfo: ProjectInfo): void {
     const index = this.projectWindows.findIndex((win) => win.id === windowId);
     if (index !== -1) {
-      // Создаем новый объект, чтобы Angular обнаружил изменение
       this.projectWindows[index] = {
         ...this.projectWindows[index],
         projectInfo,
@@ -138,13 +138,35 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Пример метода в компоненте, управляющем окном:
-  updateWindowGraph(newGraph: Procedure[]): void {
-    const window = this.projectWindows[this.selectedTabIndex];
-    if (window && window.projectInfo) {
-      window.projectInfo = { ...window.projectInfo, graph: newGraph };
-      // При сохранении проекта потом этот обновлённый объект используется для записи файла
-      this.projectService.setProjectInfo(window.projectInfo);
+  async handleSaveAllProjects(): Promise<void> {
+    console.log('Начинается сохранение всех проектов...');
+
+    try {
+      for (const win of this.projectWindows) {
+        if (win.projectInfo) {
+          await this.fileService.saveProject(win.projectInfo);
+          console.log(
+            `Проект "${win.projectInfo.objectName}" успешно сохранён.`,
+          );
+        }
+      }
+
+      console.log('Сохранение всех проектов завершено.');
+      window.electron.send('save-all-complete', true);
+    } catch (error) {
+      console.error('Ошибка сохранения проектов:', error);
+      window.electron.send('save-all-complete', false);
     }
+  }
+
+  showCloseConfirmation(): void {
+    const dialogRef = this.dialog.open(CloseConfirmationDialogComponent, {
+      width: '400px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      window.electron.send('close-confirmation-response', result);
+    });
   }
 }

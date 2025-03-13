@@ -18,6 +18,9 @@ interface ElectronAPI {
   openProjectFile: () => Promise<string | null>;
   readTextFile: (filePath: string) => Promise<string>;
   saveProject: (projectData: ProjectInfo) => Promise<string>;
+  on: (channel: string, callback: (event: any, ...args: any[]) => void) => void;
+  removeListener: (channel: string, callback: (...args: any[]) => void) => void;
+  send: (channel: string, ...args: any[]) => void;
 }
 
 declare global {

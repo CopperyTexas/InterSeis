@@ -35,42 +35,46 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  createWindow();
+
   // Обработчик события закрытия главного окна
   mainWindow.on('close', async (event) => {
-    // Предотвращаем стандартное закрытие окна
-    event.preventDefault();
+    console.log('Событие close получено');
+    event.preventDefault(); // Останавливаем закрытие окна
 
-    // Показываем диалоговое окно для подтверждения сохранения
-    const { response } = await dialog.showMessageBox(mainWindow, {
-      type: 'question',
-      buttons: ['Да', 'Нет', 'Отмена'],
-      defaultId: 0,
-      cancelId: 2,
-      message: 'Сохранить все открытые проекты?',
-      detail:
-        'Если вы выберете "Да", все открытые проекты будут сохранены перед закрытием.',
-    });
+    try {
+      const userChoice = await new Promise((resolve) => {
+        ipcMain.once('close-confirmation-response', (_, response) => {
+          resolve(response);
+        });
+        mainWindow.webContents.send('show-close-confirmation');
+      });
 
-    if (response === 0) {
-      // Да
-      // Отправляем IPC-сообщение в рендерер для сохранения всех проектов
-      mainWindow.webContents.send('save-all-projects');
+      if (userChoice === 'save') {
+        console.log('Пользователь выбрал "Сохранить"');
+        const saveResult = await new Promise((resolve) => {
+          ipcMain.once('save-all-complete', (_, success) => {
+            resolve(success);
+          });
+          mainWindow.webContents.send('save-all-projects');
+        });
 
-      // Здесь можно дождаться ответа от рендерера или закрыть окно сразу, если сохранение выполняется асинхронно
-      // Например, вы можете слушать событие "all-projects-saved"
-      // mainWindow.once('all-projects-saved', () => mainWindow.destroy());
-
-      // Если хотите закрыть сразу:
-      mainWindow.destroy();
-    } else if (response === 1) {
-      // Нет
-      // Закрываем окно без сохранения
-      mainWindow.destroy();
-    } else {
-      // Отмена – не закрываем окно
+        if (saveResult) {
+          console.log('Проекты сохранены, закрываем приложение.');
+          mainWindow.destroy();
+        } else {
+          console.log('Ошибка при сохранении, закрытие отменено.');
+        }
+      } else if (userChoice === 'dont-save') {
+        console.log('Пользователь выбрал "Не сохранять", закрываем окно.');
+        mainWindow.destroy();
+      } else {
+        console.log('Пользователь отменил закрытие.');
+      }
+    } catch (error) {
+      console.error('Ошибка в обработчике закрытия окна:', error);
     }
   });
-  createWindow();
 
   ipcMain.handle('openFolderDialog', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
@@ -139,6 +143,7 @@ app.whenReady().then(() => {
       throw error;
     }
   });
+
   ipcMain.handle('read-text-file', async (event, filePath) => {
     try {
       const buffer = await fs.readFile(filePath);
@@ -169,13 +174,9 @@ app.whenReady().then(() => {
 
   ipcMain.handle('read-project', async (event, filePath) => {
     try {
-      // Считываем файл как Buffer
       const buffer = await fs.readFile(filePath);
-      // Определяем кодировку
       const encoding = chardet.detect(buffer);
       console.log('Определенная кодировка:', encoding);
-
-      // Если кодировка не UTF-8, конвертируем в UTF-8
       let content;
       if (encoding && encoding.toLowerCase() !== 'utf-8') {
         content = iconv.decode(buffer, encoding);
@@ -189,7 +190,6 @@ app.whenReady().then(() => {
     }
   });
 
-  // Обработчик создания папки
   ipcMain.handle('create-folder', async (_, folderPath, folderName) => {
     const newFolderPath = path.join(folderPath, folderName);
     try {
@@ -201,7 +201,6 @@ app.whenReady().then(() => {
     }
   });
 
-  // Обработчик удаления папки
   ipcMain.handle('delete-folder', async (_, folderPath) => {
     try {
       await fs.rm(folderPath, { recursive: true, force: true });
@@ -212,12 +211,12 @@ app.whenReady().then(() => {
     }
   });
 });
+
 ipcMain.handle('save-project', async (event, projectData) => {
   try {
     let targetPath = projectData.filePath; // предполагается, что это путь к папке
     const stat = await fs.stat(targetPath).catch(() => null);
     if (stat && stat.isDirectory()) {
-      // Если projectData содержит objectName и profileName, формируем имя файла:
       const sanitizedObjectName = projectData.objectName.replace(
         /[^a-zA-Zа-яА-Я0-9]/g,
         '_',
