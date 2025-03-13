@@ -10,10 +10,16 @@ import { ProcedureGraphComponent } from '../procedure-graph/procedure-graph.comp
 import { ProjectInfoComponent } from '../project-info/project-info.component';
 import { ProjectWindow } from '../../interfaces/project-window.model';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
+import { LogsComponent } from '../logs/logs.component';
 
 @Component({
   selector: 'app-main-page',
-  imports: [ProcedureGraphComponent, ProjectInfoComponent, FileTreeComponent],
+  imports: [
+    ProcedureGraphComponent,
+    ProjectInfoComponent,
+    FileTreeComponent,
+    LogsComponent,
+  ],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',
 })

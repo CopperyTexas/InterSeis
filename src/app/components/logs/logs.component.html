@@ -1,0 +1,6 @@
+<div class="log-container">
+  <button (click)="clearLogs()" color="warn" mat-button>Очистить</button>
+  <div *ngFor="let log of logs" class="log-entry">
+    {{ log }}
+  </div>
+</div>
