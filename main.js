@@ -51,6 +51,18 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow();
 
+  ipcMain.handle('open-project-file', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'Project Files', extensions: ['ips'] }],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null; // Если пользователь отменил выбор
+    }
+
+    return result.filePaths[0]; // Возвращаем путь к файлу
+  });
   // ✅ Глобальный обработчик логов
   ipcMain.on('log-message', (event, message) => {
     console.log(`ЛОГ: ${message}`);
