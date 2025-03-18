@@ -1,6 +1,16 @@
-<div class="log-container">
-  <button (click)="clearLogs()" color="warn" mat-button>Очистить</button>
-  <div *ngFor="let log of logs" class="log-entry">
+<div>
+  <div class="flex justify-between">
+    <h3>Лог обработки</h3>
+    <button
+      (click)="clearLogs()"
+      class="bg-white text-primary border-2 border-white"
+      mat-button
+    >
+      Очистить
+    </button>
+  </div>
+
+  <div *ngFor="let log of logs">
     {{ log }}
   </div>
 </div>

@@ -11,7 +11,6 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
-import { SaveProjectDialogComponent } from '../save-project-dialog/save-project-dialog.component';
 import { FileService } from '../../services/file.service';
 import { CloseConfirmationDialogComponent } from '../close-confirmation-dialog/close-confirmation-dialog.component';
 
@@ -39,92 +38,78 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
   private nextWindowId = 3;
   private subscription!: Subscription;
 
+  // Определяем слушатель один раз
+  private saveAllListener = this.handleSaveAllProjects.bind(this);
+
   constructor(
     private projectService: ProjectService,
-    private dialog: MatDialog,
     private fileService: FileService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
-    // Подписка на обновление данных проекта
+    // Подписываемся на изменения в ProjectService и обновляем только активное окно
     this.subscription = this.projectService.projectInfo$.subscribe(
       (projectInfo) => {
         if (projectInfo) {
-          this.updateProjectInfo(
-            this.projectWindows[this.selectedTabIndex].id,
-            projectInfo,
-          );
+          const activeWindow = this.projectWindows[this.selectedTabIndex];
+          this.updateProjectInfo(activeWindow.id, projectInfo);
         }
       },
     );
-
-    // Подписка на событие "сохранить все проекты" от Electron
-    if (window.electron) {
-      window.electron.on('save-all-projects', () =>
-        this.handleSaveAllProjects(),
-      );
-      window.electron.on('show-close-confirmation', () =>
-        this.showCloseConfirmation(),
-      );
+    if (window.electron && window.electron.on) {
+      window.electron.on('close-confirmation-request', () => {
+        console.log('Получено событие close-confirmation-request');
+        // Здесь вызывается функция открытия диалогового окна подтверждения закрытия,
+        // например, openCloseConfirmationDialog()
+        this.openCloseConfirmationDialog();
+      });
     }
+  }
+  openCloseConfirmationDialog(): void {
+    const dialogRef = this.dialog.open(CloseConfirmationDialogComponent, {
+      disableClose: true,
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Результат закрытия диалога: ${result}`);
+
+      if (result === 'save') {
+        console.log(
+          'Пользователь выбрал "Сохранить". Запускаем сохранение всех проектов...',
+        );
+        await this.handleSaveAllProjects(); // Ждём завершения сохранения
+      }
+
+      if (window.electron) {
+        window.electron.send('close-confirmation-response', result);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-
-    if (window.electron) {
-      window.electron.removeListener(
-        'save-all-projects',
-        this.handleSaveAllProjects,
-      );
-      window.electron.removeListener(
-        'show-close-confirmation',
-        this.showCloseConfirmation,
-      );
+    if (window.electron && window.electron.removeListener) {
+      window.electron.removeListener('save-all-projects', this.saveAllListener);
     }
   }
 
   addTab(): void {
-    const newWindow: ProjectWindow = {
+    this.projectWindows.push({
       id: this.nextWindowId++,
       projectInfo: null,
-    };
-    this.projectWindows.push(newWindow);
+    });
     this.selectedTabIndex = this.projectWindows.length - 1;
   }
 
   removeTab(index: number, event: MouseEvent): void {
     event.stopPropagation();
-
     if (this.projectWindows.length > 1) {
-      const windowToRemove = this.projectWindows[index];
-
-      if (!windowToRemove.projectInfo) {
-        this.closeTab(index);
-      } else {
-        const dialogRef = this.dialog.open(SaveProjectDialogComponent, {
-          width: '300px',
-          data: {},
-        });
-
-        dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-          if (confirmed) {
-            this.fileService
-              .saveProject(windowToRemove.projectInfo!)
-              .then(() => this.closeTab(index))
-              .catch((error) => console.error('Ошибка сохранения:', error));
-          } else {
-            this.closeTab(index);
-          }
-        });
+      this.projectWindows.splice(index, 1);
+      if (this.selectedTabIndex >= this.projectWindows.length) {
+        this.selectedTabIndex = this.projectWindows.length - 1;
       }
-    }
-  }
-
-  private closeTab(index: number): void {
-    this.projectWindows.splice(index, 1);
-    if (this.selectedTabIndex >= this.projectWindows.length) {
-      this.selectedTabIndex = this.projectWindows.length - 1;
     }
   }
 
@@ -140,33 +125,22 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
 
   async handleSaveAllProjects(): Promise<void> {
     console.log('Начинается сохранение всех проектов...');
-
-    try {
-      for (const win of this.projectWindows) {
-        if (win.projectInfo) {
-          await this.fileService.saveProject(win.projectInfo);
+    for (const win of this.projectWindows) {
+      if (win.projectInfo) {
+        try {
+          const savedPath = await this.fileService.saveProject(win.projectInfo);
           console.log(
-            `Проект "${win.projectInfo.objectName}" успешно сохранён.`,
+            `Проект "${win.projectInfo.objectName}" сохранён в ${savedPath}`,
+          );
+        } catch (error) {
+          console.error(
+            `Ошибка сохранения проекта "${win.projectInfo.objectName}":`,
+            error,
           );
         }
+      } else {
+        console.log('Окно без загруженного проекта — сохранение пропущено.');
       }
-
-      console.log('Сохранение всех проектов завершено.');
-      window.electron.send('save-all-complete', true);
-    } catch (error) {
-      console.error('Ошибка сохранения проектов:', error);
-      window.electron.send('save-all-complete', false);
     }
-  }
-
-  showCloseConfirmation(): void {
-    const dialogRef = this.dialog.open(CloseConfirmationDialogComponent, {
-      width: '400px',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      window.electron.send('close-confirmation-response', result);
-    });
   }
 }
