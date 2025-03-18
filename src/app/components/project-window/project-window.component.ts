@@ -60,8 +60,7 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
     if (window.electron && window.electron.on) {
       window.electron.on('close-confirmation-request', () => {
         console.log('Получено событие close-confirmation-request');
-        // Здесь вызывается функция открытия диалогового окна подтверждения закрытия,
-        // например, openCloseConfirmationDialog()
+
         this.openCloseConfirmationDialog();
       });
     }
@@ -141,6 +140,13 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
       } else {
         console.log('Окно без загруженного проекта — сохранение пропущено.');
       }
+    }
+
+    console.log('✅ Все проекты сохранены.');
+
+    // Отправляем сигнал в main.js, что можно закрывать приложение
+    if (window.electron) {
+      window.electron.send('projects-saved');
     }
   }
 }
