@@ -13,6 +13,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { AddWindowButtonComponent } from '../add-window-button/add-window-button.component';
 import { FileService } from '../../services/file.service';
 import { CloseConfirmationDialogComponent } from '../close-confirmation-dialog/close-confirmation-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 declare const window: any; // Для работы с Electron API
 @Component({
@@ -45,6 +46,7 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
     private projectService: ProjectService,
     private fileService: FileService,
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -124,6 +126,19 @@ export class ProjectWindowComponent implements OnInit, OnDestroy {
 
   async handleSaveAllProjects(): Promise<void> {
     console.log('Начинается сохранение всех проектов...');
+    const projectToSave = this.projectWindows.filter((win) => win.projectInfo);
+    if (projectToSave.length === 0) {
+      console.warn('Нет открытых проектов');
+      this.snackBar.open(
+        'Нет загруженных проектов для сохранения.',
+        'Закрыть',
+        {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        },
+      );
+      return;
+    }
     for (const win of this.projectWindows) {
       if (win.projectInfo) {
         try {

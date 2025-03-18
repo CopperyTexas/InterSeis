@@ -16,6 +16,7 @@ const validChannels = [
   'show-close-confirmation',
   'close-confirmation-request',
   'close-confirmation-response',
+  'projects-saved',
 ];
 
 contextBridge.exposeInMainWorld('electron', {
