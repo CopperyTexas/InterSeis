@@ -26,7 +26,11 @@ export class ProcedureGraphComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projectInfo']) {
-      if (this.projectInfo?.graph) {
+      if (this.projectInfo) {
+        // Если поле graph отсутствует, инициализируем его пустым массивом
+        if (!this.projectInfo.graph) {
+          this.projectInfo.graph = [];
+        }
         this.procedures = [...this.projectInfo.graph];
       } else {
         this.procedures = [];
