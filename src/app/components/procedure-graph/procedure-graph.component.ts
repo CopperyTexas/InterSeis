@@ -26,42 +26,30 @@ export class ProcedureGraphComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projectInfo']) {
-      if (this.projectInfo) {
-        this.procedures = this.projectInfo.graph
-          ? [...this.projectInfo.graph]
-          : [];
+      if (this.projectInfo?.graph) {
+        this.procedures = [...this.projectInfo.graph];
       } else {
         this.procedures = [];
       }
     }
   }
 
-  drop(event: CdkDragDrop<Procedure[]>): void {
-    moveItemInArray(this.procedures, event.previousIndex, event.currentIndex);
+  drop(event: CdkDragDrop<Procedure<any>[]>): void {
+    if (event.previousContainer !== event.container) {
+      const copiedProcedure: Procedure<any> = {
+        ...event.previousContainer.data[event.previousIndex],
+        id: uuidv4(), // важно создавать новый уникальный id!
+      };
+
+      // копируем элемент в procedures графа
+      this.procedures.splice(event.currentIndex, 0, copiedProcedure);
+    } else {
+      moveItemInArray(this.procedures, event.previousIndex, event.currentIndex);
+    }
+
     this.syncGraph();
   }
 
-  private syncGraph(): void {
-    if (this.projectInfo) {
-      // Обновляем поле graph в projectInfo,
-      // создавая новую копию массива, чтобы изменения точно отразились
-      this.projectInfo.graph = [...this.procedures];
-    }
-  }
-  getProcedureSummary(procedure: Procedure<any>): string {
-    switch (procedure.type) {
-      case 'fft-analysis':
-        const fftParams = procedure.parameters as FftAnalysisParams;
-        return `Метод: ${fftParams.method}, Частота: ${fftParams.frequencyLimit}`;
-
-      case 'filtering':
-        const filterParams = procedure.parameters as FilteringParams;
-        return `Фильтр: ${filterParams.filterType}, Частота среза: ${filterParams.cutoffFrequency}, Порядок: ${filterParams.order}`;
-
-      default:
-        return 'Неизвестная процедура';
-    }
-  }
   addRandomProcedure(): void {
     const procedureTypes = ['fft-analysis', 'filtering'];
     const randomType =
@@ -100,5 +88,13 @@ export class ProcedureGraphComponent implements OnChanges {
     }
 
     this.procedures.push(newProcedure);
+    this.syncGraph();
+  }
+
+  private syncGraph(): void {
+    if (this.projectInfo) {
+      this.projectInfo.graph = [...this.procedures];
+      console.log('Граф процедур обновлён:', this.projectInfo.graph);
+    }
   }
 }

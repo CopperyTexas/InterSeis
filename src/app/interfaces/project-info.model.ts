@@ -6,5 +6,5 @@ export interface ProjectInfo {
   creationDate: string;
   user: string;
   filePath: string;
-  graph: Procedure[];
+  graph: Procedure<any>[];
 }

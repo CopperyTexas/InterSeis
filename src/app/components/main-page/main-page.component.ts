@@ -11,6 +11,7 @@ import { ProjectInfoComponent } from '../project-info/project-info.component';
 import { ProjectWindow } from '../../interfaces/project-window.model';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
 import { LogsComponent } from '../logs/logs.component';
+import { ProcedureListComponent } from '../procedure-list/procedure-list.component';
 
 @Component({
   selector: 'app-main-page',
@@ -19,6 +20,7 @@ import { LogsComponent } from '../logs/logs.component';
     ProjectInfoComponent,
     FileTreeComponent,
     LogsComponent,
+    ProcedureListComponent,
   ],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',

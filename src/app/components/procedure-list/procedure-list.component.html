@@ -1,0 +1,12 @@
+<div
+  [cdkDropListConnectedTo]="['procedureGraphList']"
+  [cdkDropListData]="procedures"
+  cdkDropList
+  class="procedure-list"
+  id="procedureList"
+>
+  <app-procedure-card
+    *ngFor="let procedure of procedures"
+    [procedure]="procedure"
+  ></app-procedure-card>
+</div>

@@ -1,0 +1,58 @@
+{
+  "objectName": "Бкпру-2",
+  "profileName": "6424",
+  "creationDate": "19.03.2025, 18:08:28",
+  "user": "denisglebov",
+  "computer": "MacBook-Air-Denis.local",
+  "filePath": "/Users/denisglebov/Desktop/InterSeis/FolderTest/folder_2/folder_2_1",
+  "graph": [
+    {
+      "id": "70b4277f-c4f4-4c95-92b8-3ebcd3a76bdb",
+      "type": "filtering",
+      "name": "Фильтрация сигнала",
+      "parameters": {
+        "filterType": "lowpass",
+        "cutoffFrequency": 39,
+        "order": 3
+      }
+    },
+    {
+      "id": "88dcefc5-d40f-46f4-96f6-55234ea23576",
+      "type": "fft-analysis",
+      "name": "Спектральный анализ",
+      "parameters": {
+        "method": "FFT",
+        "frequencyLimit": 97
+      }
+    },
+    {
+      "id": "3652e5de-032c-4495-a4d8-5303719f246f",
+      "type": "filtering",
+      "name": "Фильтрация сигнала",
+      "parameters": {
+        "filterType": "lowpass",
+        "cutoffFrequency": 50,
+        "order": 2
+      }
+    },
+    {
+      "id": "45447b56-0e15-44f1-bff9-276d3476b808",
+      "type": "fft-analysis",
+      "name": "Спектральный анализ",
+      "parameters": {
+        "method": "FFT",
+        "frequencyLimit": 150
+      }
+    },
+    {
+      "id": "f98023a8-ab3d-4da0-b564-1d73eaa96fe8",
+      "type": "filtering",
+      "name": "Фильтрация сигнала",
+      "parameters": {
+        "filterType": "lowpass",
+        "cutoffFrequency": 36,
+        "order": 4
+      }
+    }
+  ]
+}
