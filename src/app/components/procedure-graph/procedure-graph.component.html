@@ -1,3 +1,10 @@
+<button
+  class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded mb-4"
+  (click)="addRandomProcedure()"
+>
+  Добавить случайную процедуру
+</button>
+
 <div (cdkDropListDropped)="drop($event)" cdkDropList class="procedure-list">
   <div
     *ngFor="let procedure of procedures; let i = index"
@@ -9,6 +16,3 @@
     </div>
   </div>
 </div>
-<button (click)="addProcedure()" color="primary" mat-raised-button>
-  Добавить процедуру
-</button>

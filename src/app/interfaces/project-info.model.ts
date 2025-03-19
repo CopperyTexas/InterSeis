@@ -1,4 +1,4 @@
-import { Procedure } from './procedure.model';
+import { Procedure } from './procedures/procedure.model';
 
 export interface ProjectInfo {
   objectName: string;
