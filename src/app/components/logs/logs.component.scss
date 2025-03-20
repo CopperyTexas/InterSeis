@@ -1,0 +1,13 @@
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px; /* Изменяем высоту горизонтальной полосы */
+  width: 4px; /* Изменяем ширину вертикальной полосы, если потребуется */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2c55b3; /* Цвет фона полосы прокрутки */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #fff; /* Цвет "ползунка" */
+  border-radius: 6px;
+}
