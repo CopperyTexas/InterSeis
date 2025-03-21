@@ -9,6 +9,7 @@
   <div
     *ngFor="let procedure of procedures; let i = index"
     cdkDrag
+    (dblclick)="openProcedureForm(procedure)"
     class="border-2 border-primary rounded-lg p-2 bg-white hover:bg-gray-100 shadow-md cursor-pointer"
   >
     <div class="">

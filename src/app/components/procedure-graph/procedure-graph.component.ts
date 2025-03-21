@@ -9,6 +9,8 @@ import { JsonPipe, NgForOf } from '@angular/common';
 import { Procedure } from '../../interfaces/procedures/procedure.model';
 import { ProjectInfo } from '../../interfaces/project-info.model';
 import { v4 as uuidv4 } from 'uuid';
+import { MatDialog } from '@angular/material/dialog';
+import { ConvertDialogComponent } from '../procedures/convert-dialog/convert-dialog.component';
 
 @Component({
   selector: 'app-procedure-graph',
@@ -22,6 +24,7 @@ export class ProcedureGraphComponent implements OnChanges {
   @Input() projectInfo!: ProjectInfo | null;
   procedures: Procedure<any>[] = [];
 
+  constructor(private dialog: MatDialog) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projectInfo']) {
       if (this.projectInfo) {
@@ -35,7 +38,23 @@ export class ProcedureGraphComponent implements OnChanges {
       }
     }
   }
-
+  openProcedureForm(procedure: any): void {
+    switch (procedure.type) {
+      case 'conversion':
+        // Открываем форму конвертации
+        this.dialog.open(ConvertDialogComponent, {
+          width: '400px',
+          data: procedure.parameters, // можно передать параметры для предварительного заполнения
+        });
+        break;
+      // case 'filtering': // Пример для другого типа процедуры
+      //   this.dialog.open(FilterFormComponent, { data: proc.parameters });
+      //   break;
+      default:
+        console.warn('Нет формы для процедуры типа:', procedure.type);
+        break;
+    }
+  }
   drop(event: CdkDragDrop<Procedure<any>[]>): void {
     if (event.previousContainer !== event.container) {
       const copiedProcedure: Procedure<any> = {

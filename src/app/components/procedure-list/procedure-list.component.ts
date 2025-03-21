@@ -157,11 +157,12 @@ export class ProcedureListComponent {
     {
       id: uuidv4(),
       type: 'conversion',
-      name: 'Конвертация',
+      name: 'Конвертация PC → SEG-Y',
       parameters: {
-        inputFormat: 'raw',
-        outputFormat: 'resfil',
-        dataType: 'I2',
+        inputFile: 'input.pc',
+        outputFile: 'output.segy',
+        dataFormat: 'I2',
+        sorting: 'SP',
         preserveHeaders: true,
         byteSwap: false,
         normalization: 'none',
