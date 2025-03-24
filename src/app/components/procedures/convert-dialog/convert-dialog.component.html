@@ -1,86 +1,85 @@
-<div>
-  <h2 mat-dialog-title>Конвертация PC → SEG-Y</h2>
-  <form (ngSubmit)="onSubmit()" #convertForm="ngForm" class="convert-form">
+<h2 mat-dialog-title>Конвертация PC → SEG-Y</h2>
+<form (ngSubmit)="onSubmit()" [formGroup]="convertForm" class="convert-form">
+  <div class="flex justify-between gap-4">
     <!-- Input File с кнопкой выбора файла -->
-    <mat-form-field appearance="fill" style="width: 100%">
+    <mat-form-field appearance="fill" class="w-1/2">
       <mat-label>Входной файл (.pc)</mat-label>
       <input
+        formControlName="inputFile"
         matInput
         placeholder="Выберите файл"
-        name="inputFile"
-        required
         readonly
-        [(ngModel)]="conversionParams.inputFile"
+        required
       />
       <button
+        (click)="onSelectInputFile()"
         mat-icon-button
         matSuffix
         type="button"
-        (click)="onSelectInputFile()"
       >
         <mat-icon>folder_open</mat-icon>
       </button>
     </mat-form-field>
 
     <!-- Output File с кнопкой выбора файла -->
-    <mat-form-field appearance="fill" style="width: 100%">
+    <mat-form-field appearance="fill" class="w-1/2">
       <mat-label>Выходной файл (.segy)</mat-label>
       <input
+        formControlName="outputFile"
         matInput
         placeholder="Выберите файл"
-        name="outputFile"
-        required
         readonly
-        [(ngModel)]="conversionParams.outputFile"
+        required
       />
       <button
+        (click)="onSelectOutputFile()"
         mat-icon-button
         matSuffix
         type="button"
-        (click)="onSelectOutputFile()"
       >
         <mat-icon>folder_open</mat-icon>
       </button>
     </mat-form-field>
+  </div>
 
-    <!-- Остальные поля формы -->
-    <mat-form-field appearance="fill" style="width: 100%">
-      <mat-label>Формат данных</mat-label>
-      <mat-select name="dataFormat" [(ngModel)]="conversionParams.dataFormat">
-        <mat-option *ngFor="let fmt of dataFormats" [value]="fmt">
-          {{ fmt }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div class="flex">
+    <div class="flex justify-between gap-4 w-1/2 pr-2">
+      <!-- Формат данных -->
+      <mat-form-field appearance="fill" class="w-1/2">
+        <mat-label>Формат данных</mat-label>
+        <mat-select formControlName="dataFormat">
+          <mat-option *ngFor="let fmt of dataFormats" [value]="fmt">
+            {{ fmt }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width: 100%">
-      <mat-label>Сортировка</mat-label>
-      <mat-select name="sorting" [(ngModel)]="conversionParams.sorting">
-        <mat-option *ngFor="let sort of sortOptions" [value]="sort">
-          {{ sort }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-checkbox
-      name="preserveHeaders"
-      [(ngModel)]="conversionParams.preserveHeaders"
-    >
-      Сохранить заголовки
-    </mat-checkbox>
-    <mat-checkbox name="byteSwap" [(ngModel)]="conversionParams.byteSwap">
-      Поменять байты
-    </mat-checkbox>
-
-    <div style="margin-top: 16px; text-align: right">
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="!convertForm.valid"
-      >
-        Конвертировать
-      </button>
+      <!-- Сортировка -->
+      <mat-form-field appearance="fill" class="w-1/2">
+        <mat-label>Сортировка</mat-label>
+        <mat-select formControlName="sorting">
+          <mat-option *ngFor="let sort of sortOptions" [value]="sort">
+            {{ sort }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-  </form>
-</div>
+    <div class="flex flex-col w-1/2">
+      <mat-checkbox formControlName="preserveHeaders">
+        Сохранить заголовки
+      </mat-checkbox>
+      <mat-checkbox formControlName="byteSwap"> Поменять байты</mat-checkbox>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px; text-align: right">
+    <button
+      [disabled]="convertForm.invalid"
+      color="primary"
+      mat-raised-button
+      type="submit"
+    >
+      Конвертировать
+    </button>
+  </div>
+</form>

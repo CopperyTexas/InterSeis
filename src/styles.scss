@@ -43,10 +43,12 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
 /* Ширина полосы прокрутки */
 ::-webkit-scrollbar {
   width: 8px;
@@ -66,4 +68,14 @@ body {
 /* При наведении курсора */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.scroll-hidden {
+  overflow: auto;
+  -ms-overflow-style: none; /* IE и Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }

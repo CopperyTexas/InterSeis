@@ -1,17 +1,24 @@
-import { Component, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  MatFormField,
+  MatLabel,
+  MatSuffix,
+} from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInput } from '@angular/material/input';
 import { NgForOf } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { FileService } from '../../../services/file.service';
 
 @Component({
   selector: 'app-convert-dialog',
@@ -27,50 +34,77 @@ import { MatIcon } from '@angular/material/icon';
     MatInput,
     NgForOf,
     MatIconButton,
+    MatIconModule,
     MatIcon,
+    ReactiveFormsModule,
+    MatSuffix,
   ],
   templateUrl: './convert-dialog.component.html',
   styleUrl: './convert-dialog.component.scss',
 })
-export class ConvertDialogComponent {
-  // Начальные настройки процедуры конвертации
-  conversionParams = {
-    inputFile: '',
-    outputFile: '',
-    dataFormat: 'I4', // I2, I4, R4
-    sorting: 'SP', // SP, DP, OP
-    preserveHeaders: true,
-    byteSwap: false,
-  };
+export class ConvertDialogComponent implements OnInit {
+  convertForm!: FormGroup;
 
   dataFormats = ['I2', 'I4', 'R4'];
   sortOptions = ['SP', 'DP', 'OP'];
 
   constructor(
+    private fileService: FileService,
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<ConvertDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {
-    if (data) {
-      this.conversionParams = { ...this.conversionParams, ...data };
-    }
+  ) {}
+
+  ngOnInit(): void {
+    this.convertForm = this.fb.group({
+      inputFile: ['', Validators.required],
+      outputFile: ['', Validators.required],
+      dataFormat: ['I4', Validators.required],
+      sorting: ['SP', Validators.required],
+      preserveHeaders: [true],
+      byteSwap: [false],
+    });
   }
 
-  // Обработчик выбора файла
-  onFileSelected(event: Event, field: 'inputFile' | 'outputFile'): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      // В веб-приложении по соображениям безопасности не доступен полный путь к файлу.
-      // Если используешь Electron, можно получить file.path.
-      const file = input.files[0];
-      // Например, если используешь Electron, то:
-      this.conversionParams[field] = (file as any).path || file.name;
-      // В браузере можно сохранить File объект, если это требуется.
-      console.log(`Выбран файл для ${field}:`, this.conversionParams[field]);
-    }
+  // Метод для открытия диалога выбора входного файла (.pc)
+  onSelectInputFile(): void {
+    this.fileService
+      .openFileDialog({
+        title: 'Выберите PC-файл',
+        filters: [{ name: 'PC Files', extensions: ['pc'] }],
+        properties: ['openFile'],
+      })
+      .then((filePath) => {
+        if (filePath && filePath.length > 0) {
+          this.convertForm.patchValue({ inputFile: filePath[0] });
+        }
+      })
+      .catch((err) => console.error('Ошибка выбора входного файла:', err));
+  }
+
+  // Метод для открытия диалога выбора выходного файла (.segy)
+  onSelectOutputFile(): void {
+    this.fileService
+      .openSaveDialog({
+        title: 'Сохранить SEG-Y файл',
+        defaultPath: 'output.segy', // можно задать значение по умолчанию
+        filters: [{ name: 'SEG-Y Files', extensions: ['segy'] }],
+      })
+      .then((filePath: string) => {
+        if (filePath) {
+          this.convertForm.patchValue({ outputFile: filePath });
+        }
+      })
+      .catch((err) => console.error('Ошибка выбора выходного файла:', err));
   }
 
   onSubmit(): void {
-    console.log('Параметры конвертации:', this.conversionParams);
-    this.dialogRef.close(this.conversionParams);
+    if (this.convertForm.valid) {
+      console.log('Параметры конвертации:', this.convertForm.value);
+      this.dialogRef.close(this.convertForm.value);
+    }
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 }

@@ -25,6 +25,7 @@ export class ProcedureGraphComponent implements OnChanges {
   procedures: Procedure<any>[] = [];
 
   constructor(private dialog: MatDialog) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projectInfo']) {
       if (this.projectInfo) {
@@ -38,12 +39,14 @@ export class ProcedureGraphComponent implements OnChanges {
       }
     }
   }
+
   openProcedureForm(procedure: any): void {
     switch (procedure.type) {
       case 'conversion':
         // Открываем форму конвертации
         this.dialog.open(ConvertDialogComponent, {
-          width: '400px',
+          width: '700px',
+          maxWidth: 'none',
           data: procedure.parameters, // можно передать параметры для предварительного заполнения
         });
         break;
@@ -55,6 +58,7 @@ export class ProcedureGraphComponent implements OnChanges {
         break;
     }
   }
+
   drop(event: CdkDragDrop<Procedure<any>[]>): void {
     if (event.previousContainer !== event.container) {
       const copiedProcedure: Procedure<any> = {

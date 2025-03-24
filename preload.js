@@ -17,9 +17,13 @@ const validChannels = [
   'close-confirmation-request',
   'close-confirmation-response',
   'projects-saved',
+  'open-file-dialog',
+  'open-save-dialog',
 ];
 
 contextBridge.exposeInMainWorld('electron', {
+  openFileDialog: (options) => ipcRenderer.invoke('open-file-dialog', options),
+  openSaveDialog: (options) => ipcRenderer.invoke('open-save-dialog', options),
   openFolderDialog: () => ipcRenderer.invoke('openFolderDialog'),
   readDirectory: (folderPath) =>
     ipcRenderer.invoke('readDirectory', folderPath),

@@ -209,6 +209,18 @@ app.whenReady().then(() => {
     }
   });
 });
+ipcMain.handle('open-file-dialog', async (event, options) => {
+  const win = BrowserWindow.getFocusedWindow();
+  const result = await dialog.showOpenDialog(win, options);
+  return result.filePaths;
+});
+ipcMain.handle('open-save-dialog', async (event, options) => {
+  const result = await dialog.showSaveDialog(
+    BrowserWindow.getFocusedWindow(),
+    options,
+  );
+  return result.filePath;
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
