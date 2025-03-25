@@ -48,4 +48,4 @@ def analyze_pc_file(filename):
 
 
 if __name__ == "__main__":
-  analyze_pc_file("/Users/denisglebov/Desktop/InterSeis/src/app/procedures/6424b2.pc")
+  analyze_pc_file(r"C:\Users\Глебов\Desktop\InterSeis\src\app\procedures\6424b2.pc")
