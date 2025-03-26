@@ -1,0 +1,48 @@
+<div
+  cdkDrag
+  (dblclick)="onDoubleClick()"
+  [ngClass]="[
+    procedure.active ? 'border-primary' : 'border-gray-300',
+    getGroupBgColor(procedure.groupType),
+  ]"
+  class="border-2 rounded-lg p-2 bg-white hover:bg-gray-100 shadow-md cursor-pointer flex gap-2 items-center"
+>
+  <mat-slide-toggle
+    [checked]="procedure.active"
+    (change)="onToggleChange($event.checked)"
+    color="primary"
+    disableRipple
+  ></mat-slide-toggle>
+  <div class="flex gap-2 items-center">
+    <p
+      class="text-xl border-2 rounded-full px-2"
+      [ngClass]="{
+        'border-primary': procedure.active,
+        'border-gray-300': !procedure.active,
+      }"
+    >
+      {{ index + 1 }}
+    </p>
+    <div
+      class="w-24 border-2 rounded-full p-1 text-center mr-2"
+      [ngClass]="{
+        'border-primary': procedure.active,
+        'border-gray-300': !procedure.active,
+      }"
+    >
+      <mat-select
+        class="text-xs"
+        [value]="procedure.mode"
+        (selectionChange)="onModeChange($event.value)"
+        placeholder="-"
+      >
+        <mat-option [value]="'SP'">SP</mat-option>
+        <mat-option [value]="'DP'">DP</mat-option>
+        <mat-option [value]="'OP'">OP</mat-option>
+        <mat-option [value]="'OP'">None</mat-option>
+      </mat-select>
+    </div>
+
+    <p>{{ procedure.name }}</p>
+  </div>
+</div>

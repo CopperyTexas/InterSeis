@@ -5,7 +5,7 @@ import segyio
 
 
 def convert_pc_to_segy(pc_filename: str, segy_filename: str,
-                       data_format: str = 'I4', sorting: str = 'SP',
+                       data_format: str = 'I2', sorting: str = 'SP',
                        preserve_headers: bool = True, byte_swap: bool = False,
                        header_size: int = 3200, trace_header_size: int = 240,
                        sample_count: int = 1500):
@@ -25,7 +25,7 @@ def convert_pc_to_segy(pc_filename: str, segy_filename: str,
   # Выбор типа данных
   if data_format.upper() == 'I2':
     sample_dtype = np.int16
-    segy_format = 1
+    segy_format = 3
   elif data_format.upper() == 'I4':
     sample_dtype = np.int32
     segy_format = 2

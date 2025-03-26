@@ -1,21 +1,21 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
-  CdkDrag,
   CdkDragDrop,
   CdkDropList,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { JsonPipe, NgForOf } from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { Procedure } from '../../interfaces/procedures/procedure.model';
 import { ProjectInfo } from '../../interfaces/project-info.model';
 import { v4 as uuidv4 } from 'uuid';
 import { MatDialog } from '@angular/material/dialog';
 import { ConvertDialogComponent } from '../procedures/convert-dialog/convert-dialog.component';
+import { ProcedureGraphCardComponent } from '../procedure-graph-card/procedure-graph-card.component';
 
 @Component({
   selector: 'app-procedure-graph',
   standalone: true,
-  imports: [CdkDropList, NgForOf, CdkDrag, JsonPipe],
+  imports: [CdkDropList, NgForOf, ProcedureGraphCardComponent],
   templateUrl: './procedure-graph.component.html',
   styleUrl: './procedure-graph.component.scss',
 })
@@ -80,5 +80,14 @@ export class ProcedureGraphComponent implements OnChanges {
       this.projectInfo.graph = [...this.procedures];
       console.log('Граф процедур обновлён:', this.projectInfo.graph);
     }
+  }
+  toggleProcedureActive(index: number, isActive: boolean): void {
+    this.procedures[index].active = isActive;
+    this.syncGraph(); // сохраняем в projectInfo
+  }
+
+  changeProcedureMode(index: number, mode: 'SP' | 'DP' | 'OP' | 'None') {
+    this.procedures[index].mode = mode;
+    this.syncGraph(); // обновим проект
   }
 }

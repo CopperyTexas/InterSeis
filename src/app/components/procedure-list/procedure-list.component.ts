@@ -18,12 +18,14 @@ export class ProcedureListComponent {
       type: 'fft-analysis',
       name: 'Спектральный анализ',
       parameters: { method: 'FFT', frequencyLimit: 150 },
+      groupType: 'single-channel',
     },
     {
       id: uuidv4(),
       type: 'filtering',
       name: 'Фильтрация сигнала',
       parameters: { filterType: 'lowpass', cutoffFrequency: 50, order: 2 },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -37,6 +39,7 @@ export class ProcedureListComponent {
         direction: 'bidirectional',
         stabilityThreshold: 0.01,
       },
+      groupType: 'header-processing',
     },
     {
       id: uuidv4(),
@@ -50,6 +53,7 @@ export class ProcedureListComponent {
         minAllowedShift: -25,
         alignmentTolerance: 0.05,
       },
+      groupType: 'single-channel',
     },
     {
       id: uuidv4(),
@@ -62,6 +66,7 @@ export class ProcedureListComponent {
         referenceLevel: 0,
         tolerance: 0.05,
       },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -75,6 +80,7 @@ export class ProcedureListComponent {
         smoothingWindow: 10,
         adjustmentThreshold: 0.1,
       },
+      groupType: 'header-processing',
     },
     {
       id: uuidv4(),
@@ -88,6 +94,7 @@ export class ProcedureListComponent {
         attenuation: 0.01,
         phaseResponse: 'zero',
       },
+      groupType: 'single-channel',
     },
     {
       id: uuidv4(),
@@ -101,6 +108,7 @@ export class ProcedureListComponent {
         stabilizationFactor: 0.001,
         iterations: 1,
       },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -114,6 +122,7 @@ export class ProcedureListComponent {
         attenuation: 0.05,
         stabilizationFactor: 0.001,
       },
+      groupType: 'header-processing',
     },
     {
       id: uuidv4(),
@@ -127,6 +136,7 @@ export class ProcedureListComponent {
         errorThreshold: 0.01,
         interpolationMethod: 'linear',
       },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -140,6 +150,7 @@ export class ProcedureListComponent {
         attenuation: 0.02,
         phaseResponse: 'linear',
       },
+      groupType: 'single-channel',
     },
     {
       id: uuidv4(),
@@ -153,6 +164,7 @@ export class ProcedureListComponent {
         gainControl: true,
         iterations: 1,
       },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -168,6 +180,7 @@ export class ProcedureListComponent {
         normalization: 'none',
         interpolationMethod: 'linear',
       },
+      groupType: 'header-processing',
     },
     {
       id: uuidv4(),
@@ -181,6 +194,7 @@ export class ProcedureListComponent {
         smoothing: 0.05,
         iterations: 2,
       },
+      groupType: 'multi-channel',
     },
     {
       id: uuidv4(),
@@ -195,6 +209,7 @@ export class ProcedureListComponent {
         phaseResponse: 'linear',
         attenuation: 0.01,
       },
+      groupType: 'single-channel',
     },
     {
       id: uuidv4(),
@@ -208,6 +223,7 @@ export class ProcedureListComponent {
         smoothingWindow: 20,
         attenuation: 0.02,
       },
+      groupType: 'multi-channel',
     },
   ];
 }
